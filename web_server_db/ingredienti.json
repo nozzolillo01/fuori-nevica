@@ -1,0 +1,42 @@
+[
+    {
+        "nome": "Mozzarella",
+        "qta": 1000
+    },
+    {
+        "nome": "Pomodoro",
+        "qta": 1500
+    },
+    {
+        "nome": "Basilico",
+        "qta": 200
+    },
+    {
+        "nome": "Olio d'oliva",
+        "qta": 500
+    },
+    {
+        "nome": "Origano",
+        "qta": 100
+    },
+    {
+        "nome": "Prosciutto",
+        "qta": 800
+    },
+    {
+        "nome": "Funghi",
+        "qta": 600
+    },
+    {
+        "nome": "Carciofi",
+        "qta": 300
+    },
+    {
+        "nome": "Salame",
+        "qta": 400
+    },
+    {
+        "nome": "Peperoni",
+        "qta": 500
+    }
+]

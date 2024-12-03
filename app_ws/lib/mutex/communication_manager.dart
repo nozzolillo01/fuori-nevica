@@ -4,14 +4,15 @@ import 'dart:convert';
 import 'node.dart';
 import 'package:app_ws/config.dart';
 
-class DistributedMutex {
+class CommunicationManager {
   final int nodeId;
   final String nodeName;
-  int timestamp = 0; 
+  int timestamp = 0;
   final List<Node> peers = [];
   final Map<int, bool> replies = {};
 
-  DistributedMutex(this.nodeId, this.nodeName, List<Map<String, dynamic>> peers) {
+  CommunicationManager(
+      this.nodeId, this.nodeName, List<Map<String, dynamic>> peers) {
     for (var peer in peers) {
       _initNode(peer['indirizzo'], name: peer['nome']);
     }
@@ -29,7 +30,8 @@ class DistributedMutex {
   }
 
   Future<void> notifyRegistration() async {
-    debugPrint("/**************************************** entered notifying registration");
+    debugPrint(
+        "/**************************************** entered notifying registration");
     final message = jsonEncode({
       'type': 'registration',
       'nodeId': nodeId,
@@ -52,29 +54,29 @@ class DistributedMutex {
 
   void _initNode(String address, {String name = 'SCONOSCIUTO'}) {
     debugPrint('Connettendo a $address...');
-      try {
-        final channel = _createChannel(address);
-        debugPrint('Connesso a $address');
+    try {
+      final channel = _createChannel(address);
+      debugPrint('Connesso a $address');
 
-        final node = Node(address, name, channel);
-        peers.add(node);
+      final node = Node(address, name, channel);
+      peers.add(node);
 
-        channel.stream.listen(
-          (message) {
-            _handleIncomingMessage(message, node);
-          },
-          onDone: () {
-            node.isConnected = false;
-            debugPrint('Connessione chiusa con $address');
-          },
-          onError: (error) {
-            node.isConnected = false;
-            debugPrint('Errore connessione a $address: $error');
-          },
-        );
-      } catch (e) {
-        debugPrint('Errore connessione a $address: $e');
-      }
+      channel.stream.listen(
+        (message) {
+          _handleIncomingMessage(message, node);
+        },
+        onDone: () {
+          node.isConnected = false;
+          debugPrint('Connessione chiusa con $address');
+        },
+        onError: (error) {
+          node.isConnected = false;
+          debugPrint('Errore connessione a $address: $error');
+        },
+      );
+    } catch (e) {
+      debugPrint('Errore connessione a $address: $e');
+    }
   }
 
   IOWebSocketChannel _createChannel(String address) {
@@ -84,14 +86,15 @@ class DistributedMutex {
   void _handleIncomingMessage(String message, Node node) {
     final data = jsonDecode(message);
 
-    if(data['type'] == 'registration') {
+    if (data['type'] == 'registration') {
       //TODO check if already exists
       _initNode(data['nodeAddress'], name: data['nodeName']);
       return;
     }
 
     //ELSE: request or reply
-    timestamp = (timestamp > data['timestamp'] ? timestamp : data['timestamp']) + 1;
+    timestamp =
+        (timestamp > data['timestamp'] ? timestamp : data['timestamp']) + 1;
 
     if (data['type'] == 'request') {
       _handleRequest(data, node);
@@ -100,7 +103,7 @@ class DistributedMutex {
       if (allRepliesReceived()) {
         accessResource();
       }
-    } 
+    }
   }
 
   void _handleRequest(Map<String, dynamic> data, Node node) {
@@ -113,9 +116,9 @@ class DistributedMutex {
   }
 
   bool _shouldReplyImmediately(int otherTimestamp, int otherNodeId) {
-    return timestamp > otherTimestamp || (timestamp == otherTimestamp && nodeId > otherNodeId);
+    return timestamp > otherTimestamp ||
+        (timestamp == otherTimestamp && nodeId > otherNodeId);
   }
-
 
   void _sendReply(int targetNodeId) {
     final reply = jsonEncode({
@@ -124,7 +127,8 @@ class DistributedMutex {
       'timestamp': timestamp,
     });
 
-    final targetNode = peers.firstWhere((peer) => peer.address.contains(targetNodeId.toString()));
+    final targetNode = peers
+        .firstWhere((peer) => peer.address.contains(targetNodeId.toString()));
     if (targetNode.isConnected) {
       targetNode.sendMessage(reply);
     }
@@ -134,7 +138,7 @@ class DistributedMutex {
 
   void accessResource() {
     debugPrint('Accesso alla risorsa con timestamp $timestamp');
-    replies.clear(); 
+    replies.clear();
   }
 
   List<Node> getConnectedPeers() {

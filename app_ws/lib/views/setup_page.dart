@@ -1,11 +1,10 @@
 import 'package:app_ws/config.dart';
-import 'package:app_ws/services/webservice.dart';
 import 'package:app_ws/viewmodels/setup_provider.dart';
+import 'package:app_ws/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SetupPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Consumer<SetupProvider>(
@@ -13,13 +12,12 @@ class SetupPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Configurazione'),
-            leading: 
-              IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -42,23 +40,24 @@ class SetupPage extends StatelessWidget {
                   onPressed: () async {
                     setupProvider.refreshNodes();
                   },
-                  child: const Text('RESET CONNESSIONE'),
+                  child: const Text('AGGIORNA'),
                 ),
                 const SizedBox(height: 16),
-                const Text('Stato Connessione Peer:'),
                 Expanded(
-                  child: setupProvider.mutex?.getConnectedPeers().isNotEmpty ?? false
+                  child: setupProvider.mutex?.getConnectedPeers().isNotEmpty ??
+                          false
                       ? ListView.builder(
-                          itemCount: setupProvider.mutex!.getConnectedPeers().length,
+                          itemCount:
+                              setupProvider.mutex!.getConnectedPeers().length,
                           itemBuilder: (context, index) {
-                            final peer = setupProvider.mutex?.getConnectedPeers().elementAt(index);
-                            return ListTile(
-                              title: Text('${peer?.name} (${peer?.address})'),
-                              subtitle: Text(peer != null && peer.isConnected ? 'Connesso' : 'Disconnesso'),
-                            );
+                            final peer = setupProvider.mutex
+                                ?.getConnectedPeers()
+                                .elementAt(index);
+                            return DeviceCard(device: peer!);
                           },
                         )
-                      : const Center(child: Text('Nessun altro cameriere registrato')),
+                      : const Center(
+                          child: Text('Nessun altro cameriere registrato')),
                 ),
               ],
             ),

@@ -4,7 +4,7 @@ import 'package:app_ws/services/webservice.dart';
 import 'package:app_ws/config.dart';
 import 'package:app_ws/viewmodels/setup_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:app_ws/mutex/ricart_agrawala.dart'; 
+import 'package:app_ws/mutex/communication_manager.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -35,9 +35,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
       int myId = -1;
       String myName = '';
       bool newDevice = false;
-      if(myself.isEmpty) {
+      if (myself.isEmpty) {
         setMessage("Registrazione come cameriere...");
-        
+
         String name = await _inputDeviceName();
         myId = await webService.register(myIp, name.isEmpty ? myIp : name);
         myName = name;
@@ -49,11 +49,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
       }
 
       setMessage("Inizializzazione del Mutex...");
-      final mutex = DistributedMutex(myId, myName, knownPeers.where((peer) => peer['indirizzo'] != myIp).toList());
+      final mutex = CommunicationManager(myId, myName,
+          knownPeers.where((peer) => peer['indirizzo'] != myIp).toList());
 
-      if(newDevice) {
+      if (newDevice) {
         setMessage("Comunico la mia registrazione...");
-        debugPrint("/**************************************** Notifying registration");
+        debugPrint(
+            "/**************************************** Notifying registration");
         mutex.notifyRegistration();
       }
 
@@ -93,27 +95,27 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   Future<String> _inputDeviceName() async {
     final result = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            TextEditingController controller = TextEditingController();
-            return AlertDialog(
-              title: Text('Inserisci il nome del dispositivo'),
-              content: TextField(
-                controller: controller,
-                decoration: InputDecoration(hintText: "Nome dispositivo"),
-              ),
-              actions: [
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop(controller.text);
-                  },
-                ),
-              ],
-            );
-          },
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController controller = TextEditingController();
+        return AlertDialog(
+          title: Text('Inserisci il nome del dispositivo'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: "Nome dispositivo"),
+          ),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(controller.text);
+              },
+            ),
+          ],
         );
-        return result ?? '';
+      },
+    );
+    return result ?? '';
   }
 
   @override

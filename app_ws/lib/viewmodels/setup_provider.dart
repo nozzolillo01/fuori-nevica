@@ -1,11 +1,11 @@
-import 'package:app_ws/mutex/ricart_agrawala.dart';
+import 'package:app_ws/mutex/communication_manager.dart';
 import 'package:flutter/material.dart';
 
 class SetupProvider with ChangeNotifier {
-  DistributedMutex? _mutex;
+  CommunicationManager? _mutex;
   List<dynamic> _ingredienti = [];
 
-  DistributedMutex? get mutex => _mutex;
+  CommunicationManager? get mutex => _mutex;
   List<dynamic> get ingredienti => _ingredienti;
 
   void refreshNodes() {
@@ -13,7 +13,7 @@ class SetupProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setMutex(DistributedMutex mutex) {
+  void setMutex(CommunicationManager mutex) {
     _mutex = mutex;
     notifyListeners();
   }
@@ -22,5 +22,4 @@ class SetupProvider with ChangeNotifier {
     _ingredienti = ingredienti;
     notifyListeners();
   }
-
 }

@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   _startLocalWS();
-  
+
   runApp(const App());
 }
 
@@ -20,7 +20,6 @@ Future<void> _startLocalWS() async {
 }
 
 class App extends StatelessWidget {
-
   const App({super.key});
 
   @override

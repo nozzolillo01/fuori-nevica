@@ -1,8 +1,12 @@
 import 'dart:io';
 
-class Config {
+import 'package:app_ws/mutex/communication_manager.dart';
+
+class Shared {
   static const int websocketPort = 8080;
-  static const String apiBaseUrl = 'http://192.168.241.1:5000';
+  static const String apiBaseUrl = 'http://192.168.241.196:5000';
+
+  static CommunicationManager? communicationManager;
 
   static Future<String> getIpAddress() async {
     for (var interface in await NetworkInterface.list()) {
@@ -12,6 +16,7 @@ class Config {
         }
       }
     }
-    return '127.0.0.1'; 
+
+    return '127.0.0.1';
   }
 }

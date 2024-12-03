@@ -7,7 +7,7 @@ class LocalWebSocketServer {
   final int port;
   late HttpServer _server;
 
-  LocalWebSocketServer({this.port = Config.websocketPort});
+  LocalWebSocketServer({this.port = Shared.websocketPort});
 
   Future<void> start() async {
     _server = await HttpServer.bind(InternetAddress.anyIPv4, port);

@@ -4,9 +4,15 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class WebService {
-  final String baseUrl = Config.apiBaseUrl;
+  final String baseUrl = Shared.apiBaseUrl;
 
-  WebService();
+  WebService._internal();
+
+  static WebService get _instance => WebService._internal();
+
+  factory WebService() {
+    return _instance;
+  }
 
   Future<List<dynamic>> getIngredienti() async {
     final response = await http.get(Uri.parse('$baseUrl/ingredienti'));
@@ -22,10 +28,10 @@ class WebService {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       return List<Map<String, dynamic>>.from(data.map((cameriere) => {
-        'id': cameriere[0],
-        'indirizzo': cameriere[1],
-        'nome': cameriere[2],
-      }));
+            'id': cameriere[0],
+            'indirizzo': cameriere[1],
+            'nome': cameriere[2],
+          }));
     } else {
       throw Exception('Failed to load camerieri');
     }

@@ -1,10 +1,32 @@
 import 'package:app_ws/config.dart';
+import 'package:app_ws/mutex/communication_manager.dart';
+import 'package:app_ws/mutex/node.dart';
 import 'package:app_ws/viewmodels/setup_provider.dart';
 import 'package:app_ws/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SetupPage extends StatelessWidget {
+class SetupPage extends StatefulWidget {
+  @override
+  _SetupPageState createState() => _SetupPageState();
+}
+
+class _SetupPageState extends State<SetupPage> {
+  CommunicationManager communicationManager = CommunicationManager();
+  List<Node> knownPeers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshPeers();
+  }
+
+  Future<void> _refreshPeers() async {
+    setState(() {
+      knownPeers = communicationManager.peers;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SetupProvider>(
@@ -23,9 +45,9 @@ class SetupPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                Text('${setupProvider.mutex?.nodeName}'),
+                Text(communicationManager.nodeName),
                 FutureBuilder<String>(
-                  future: Config.getIpAddress(),
+                  future: Shared.getIpAddress(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
@@ -37,23 +59,17 @@ class SetupPage extends StatelessWidget {
                   },
                 ),
                 ElevatedButton(
-                  onPressed: () async {
-                    setupProvider.refreshNodes();
-                  },
+                  onPressed: _refreshPeers,
                   child: const Text('AGGIORNA'),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: setupProvider.mutex?.getConnectedPeers().isNotEmpty ??
-                          false
+                  child: knownPeers.isNotEmpty
                       ? ListView.builder(
-                          itemCount:
-                              setupProvider.mutex!.getConnectedPeers().length,
+                          itemCount: knownPeers.length,
                           itemBuilder: (context, index) {
-                            final peer = setupProvider.mutex
-                                ?.getConnectedPeers()
-                                .elementAt(index);
-                            return DeviceCard(device: peer!);
+                            final peer = knownPeers[index];
+                            return DeviceCard(device: peer);
                           },
                         )
                       : const Center(

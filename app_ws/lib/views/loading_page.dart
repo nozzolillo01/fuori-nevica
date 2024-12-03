@@ -15,6 +15,7 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   final WebService webService = WebService();
+  final CommunicationManager communicationManager = CommunicationManager();
   String statusMessage = "Inizializzazione...";
 
   @override
@@ -26,7 +27,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Future<void> _initialize() async {
     try {
       setMessage("Recupero il mio indirizzo ip...");
-      final myIp = await Config.getIpAddress();
+      final myIp = await Shared.getIpAddress();
 
       setMessage("Download degli altri nodi...");
       final knownPeers = await webService.getCamerieri();
@@ -34,40 +35,35 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
       int myId = -1;
       String myName = '';
-      bool newDevice = false;
       if (myself.isEmpty) {
-        setMessage("Registrazione come cameriere...");
+        setMessage("Nuovo device, registrazione in corso...");
 
-        String name = await _inputDeviceName();
-        myId = await webService.register(myIp, name.isEmpty ? myIp : name);
-        myName = name;
-        newDevice = true;
+        String myName = await _inputDeviceName();
+        myId = await webService.register(myIp, myName);
       } else {
+        //TODO notify join
         setMessage("Recupero il mio id...");
         myId = myself.first['id'];
         myName = myself.first['nome'];
       }
 
       setMessage("Inizializzazione del Mutex...");
-      final mutex = CommunicationManager(myId, myName,
-          knownPeers.where((peer) => peer['indirizzo'] != myIp).toList());
-
-      if (newDevice) {
-        setMessage("Comunico la mia registrazione...");
-        debugPrint(
-            "/**************************************** Notifying registration");
-        mutex.notifyRegistration();
+      communicationManager.nodeId = myId;
+      communicationManager.nodeName = myName;
+      for (var peer in knownPeers) {
+        communicationManager.addNode(peer['indirizzo'], name: peer['nome']);
       }
+
+      setMessage("Notifico la mia presenza...");
+      communicationManager.notifyJoin();
 
       setMessage("Download degli ingredienti...");
       final ingredienti = await webService.getIngredienti();
 
       final setupProvider = Provider.of<SetupProvider>(context, listen: false);
-      setupProvider.setMutex(mutex);
       setupProvider.setIngredienti(ingredienti);
 
       setMessage("Caricamento completato. Avvio...");
-
       _navigateToOrderPage();
     } catch (e) {
       setMessage("Errore durante l'inizializzazione dell'app: ${e.toString()}");
@@ -99,14 +95,14 @@ class _LoadingScreenState extends State<LoadingScreen> {
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
         return AlertDialog(
-          title: Text('Inserisci il nome del dispositivo'),
+          title: const Text('Inserisci il nome del dispositivo'),
           content: TextField(
             controller: controller,
-            decoration: InputDecoration(hintText: "Nome dispositivo"),
+            decoration: const InputDecoration(hintText: "Nome dispositivo"),
           ),
           actions: [
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop(controller.text);
               },

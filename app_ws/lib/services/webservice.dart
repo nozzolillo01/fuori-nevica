@@ -1,4 +1,4 @@
-import 'package:app_ws/config.dart';
+import 'package:fuori_nevica/config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

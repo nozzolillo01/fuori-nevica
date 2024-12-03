@@ -1,4 +1,4 @@
-import 'package:app_ws/viewmodels/order_provider.dart';
+import 'package:fuori_nevica/viewmodels/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,9 @@ class PizzaCard extends StatelessWidget {
         title: Row(
           children: [
             Expanded(
-              child: Text(pizza, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              child: Text(pizza,
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
             ),
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blueAccent),
@@ -43,7 +45,8 @@ class PizzaCard extends StatelessWidget {
                 pizzaOrderModel.removeFromOrder(pizza);
               },
             ),
-            Text('${pizzaOrderModel.getPizzaCount(pizza)}', style: const TextStyle(fontSize: 24)),
+            Text('${pizzaOrderModel.getPizzaCount(pizza)}',
+                style: const TextStyle(fontSize: 24)),
             IconButton(
               icon: const Icon(Icons.add, color: Colors.green),
               iconSize: 30,
@@ -57,7 +60,8 @@ class PizzaCard extends StatelessWidget {
     );
   }
 
-  void _showEditIngredientsDialog(BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
+  void _showEditIngredientsDialog(
+      BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
     final ingredients = pizzaOrderModel.getPizzaIngredients(pizza);
     final selectedIngredients = List<String>.from(ingredients);
 

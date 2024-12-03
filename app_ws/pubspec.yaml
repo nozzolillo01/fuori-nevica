@@ -1,6 +1,6 @@
-name: app_ws
-description: "A new Flutter project."
-publish_to: 'none'
+name: fuori_nevica
+description: "App mobile per il progetto di sistemi distribuiti"
+publish_to: "none"
 version: 0.1.0
 
 environment:

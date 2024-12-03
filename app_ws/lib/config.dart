@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:app_ws/mutex/communication_manager.dart';
+import 'package:fuori_nevica/mutex/communication_manager.dart';
 
 class Shared {
   static const int websocketPort = 8080;
-  static const String apiBaseUrl = 'http://192.168.241.196:5000';
+  static const String apiBaseUrl = 'http://192.168.1.130:5000';
 
   static CommunicationManager? communicationManager;
 

@@ -1,7 +1,8 @@
-import 'package:app_ws/mutex/local_ws.dart';
-import 'package:app_ws/viewmodels/setup_provider.dart';
-import 'package:app_ws/views/loading_page.dart';
+import 'package:fuori_nevica/mutex/local_ws.dart';
+import 'package:fuori_nevica/viewmodels/setup_provider.dart';
+import 'package:fuori_nevica/views/loading_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 
@@ -9,6 +10,15 @@ import 'viewmodels/order_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChannels.lifecycle.setMessageHandler((message) async {
+    if (message == 'AppLifecycleState.paused') {
+      debugPrint("App in background");
+    } else if (message == 'AppLifecycleState.detached') {
+      debugPrint("App chiusa");
+    }
+
+    return null;
+  });
 
   _startLocalWS();
 

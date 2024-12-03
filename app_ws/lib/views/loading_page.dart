@@ -1,10 +1,10 @@
-import 'package:app_ws/views/order_page.dart';
+import 'package:fuori_nevica/views/order_page.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ws/services/webservice.dart';
-import 'package:app_ws/config.dart';
-import 'package:app_ws/viewmodels/setup_provider.dart';
+import 'package:fuori_nevica/services/webservice.dart';
+import 'package:fuori_nevica/config.dart';
+import 'package:fuori_nevica/viewmodels/setup_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:app_ws/mutex/communication_manager.dart';
+import 'package:fuori_nevica/mutex/communication_manager.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});

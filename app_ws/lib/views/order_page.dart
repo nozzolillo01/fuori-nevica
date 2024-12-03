@@ -1,6 +1,6 @@
-import 'package:app_ws/viewmodels/order_provider.dart';
-import 'package:app_ws/views/setup_page.dart';
-import 'package:app_ws/widgets/pizza_card.dart';
+import 'package:fuori_nevica/viewmodels/order_provider.dart';
+import 'package:fuori_nevica/views/setup_page.dart';
+import 'package:fuori_nevica/widgets/pizza_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class _OrderPageState extends State<OrderPage> {
         title: const Text('FUORI NEVICA'),
         actions: [
           IconButton(
-          icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SetupPage()),
@@ -52,18 +52,23 @@ class _OrderPageState extends State<OrderPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
-                    onPressed: () => _showConfirmationDialog(context, pizzaOrderModel),
-                    child: const Row(children: [
-                      Text('Place Order'),
-                      Icon(Icons.check),
-                    ],),
+                    onPressed: () =>
+                        _showConfirmationDialog(context, pizzaOrderModel),
+                    child: const Row(
+                      children: [
+                        Text('Place Order'),
+                        Icon(Icons.check),
+                      ],
+                    ),
                   ),
                   const SizedBox(width: 16),
                   ElevatedButton(
-                    child: const Row(children: [
-                      Text('Reset Order'),
-                      Icon(Icons.clear),
-                    ],),
+                    child: const Row(
+                      children: [
+                        Text('Reset Order'),
+                        Icon(Icons.clear),
+                      ],
+                    ),
                     onPressed: () => _showResetDialog(context, pizzaOrderModel),
                   ),
                 ],
@@ -75,7 +80,8 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  void _showEditIngredientsDialog(BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
+  void _showEditIngredientsDialog(
+      BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
     final ingredients = pizzaOrderModel.getPizzaIngredients(pizza);
     final selectedIngredients = List<String>.from(ingredients);
 
@@ -125,7 +131,8 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context, OrderProvider pizzaOrderModel) {
+  void _showConfirmationDialog(
+      BuildContext context, OrderProvider pizzaOrderModel) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -141,7 +148,8 @@ class _OrderPageState extends State<OrderPage> {
               onPressed: () {
                 pizzaOrderModel.placeOrder();
                 Navigator.of(context).pop();
-                _showSnackBar(context, 'Order placed successfully!', Colors.green);
+                _showSnackBar(
+                    context, 'Order placed successfully!', Colors.green);
               },
               child: const Text('Confirm'),
             ),

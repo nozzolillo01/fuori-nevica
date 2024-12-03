@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:app_ws/mutex/communication_manager.dart';
-import 'package:app_ws/mutex/node.dart';
+import 'package:fuori_nevica/mutex/communication_manager.dart';
+import 'package:fuori_nevica/mutex/node.dart';
 import 'package:flutter/material.dart';
 
 class RicartAgrawala {
   final CommunicationManager communicationManager = CommunicationManager();
 
-  int timestamp;
-  Map<int, bool> replies;
+  int _timestamp;
+  Map<int, bool> _replies;
 
   static final RicartAgrawala _instance = RicartAgrawala._internal();
 
@@ -17,22 +17,23 @@ class RicartAgrawala {
   }
 
   RicartAgrawala._internal()
-      : timestamp = 0,
-        replies = {};
+      : _timestamp = 0,
+        _replies = {};
 
   void requestResource() {
-    timestamp++;
+    _timestamp++;
+    //TODO invia ordine
     final message = jsonEncode({
       'type': 'request',
       'nodeId': communicationManager.nodeId,
-      'timestamp': timestamp,
+      'timestamp': _timestamp,
     });
 
     communicationManager.multicastMessage(message);
   }
 
   void handleReply(Map<String, dynamic> data, Node node) {
-    replies[data['nodeId']] = true;
+    _replies[data['nodeId']] = true;
     if (_allRepliesReceived()) {
       _accessResource();
     }
@@ -48,8 +49,8 @@ class RicartAgrawala {
   }
 
   bool _shouldReplyImmediately(int otherTimestamp, int otherNodeId) {
-    return timestamp > otherTimestamp ||
-        (timestamp == otherTimestamp &&
+    return _timestamp > otherTimestamp ||
+        (_timestamp == otherTimestamp &&
             communicationManager.nodeId > otherNodeId);
   }
 
@@ -57,7 +58,7 @@ class RicartAgrawala {
     final reply = jsonEncode({
       'type': 'reply',
       'nodeId': communicationManager.nodeId,
-      'timestamp': timestamp,
+      'timestamp': _instance,
     });
 
     final targetNode = communicationManager.peers
@@ -67,10 +68,10 @@ class RicartAgrawala {
     }
   }
 
-  bool _allRepliesReceived() => replies.values.every((v) => v);
+  bool _allRepliesReceived() => _replies.values.every((v) => v);
 
   void _accessResource() {
-    debugPrint('Accesso alla risorsa con timestamp $timestamp');
-    replies.clear();
+    debugPrint('Accesso alla risorsa con timestamp $_timestamp');
+    _replies.clear();
   }
 }

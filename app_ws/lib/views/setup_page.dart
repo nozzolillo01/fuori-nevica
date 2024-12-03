@@ -1,8 +1,8 @@
-import 'package:app_ws/config.dart';
-import 'package:app_ws/mutex/communication_manager.dart';
-import 'package:app_ws/mutex/node.dart';
-import 'package:app_ws/viewmodels/setup_provider.dart';
-import 'package:app_ws/widgets/device_card.dart';
+import 'package:fuori_nevica/config.dart';
+import 'package:fuori_nevica/mutex/communication_manager.dart';
+import 'package:fuori_nevica/mutex/node.dart';
+import 'package:fuori_nevica/viewmodels/setup_provider.dart';
+import 'package:fuori_nevica/widgets/device_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

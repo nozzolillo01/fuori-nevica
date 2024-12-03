@@ -1,4 +1,4 @@
-import 'package:app_ws/mutex/communication_manager.dart';
+import 'package:fuori_nevica/mutex/communication_manager.dart';
 import 'package:flutter/material.dart';
 
 class SetupProvider with ChangeNotifier {

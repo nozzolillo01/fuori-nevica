@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:app_ws/config.dart';
+import 'package:fuori_nevica/config.dart';
 import 'package:flutter/material.dart';
 
 class LocalWebSocketServer {
@@ -18,14 +18,14 @@ class LocalWebSocketServer {
           debugPrint('Client connesso');
           websocket.listen(
             (message) {
-              debugPrint('ricevuto: $message');
+              debugPrint('[wsServer] ricevuto: $message');
               websocket.add('$message'); // Risponde al client
             },
             onDone: () {
-              debugPrint('Client disconnesso');
+              debugPrint('[wsServer] disconnesso');
             },
             onError: (error) {
-              debugPrint('errore: $error');
+              debugPrint('[wsServer] errore: $error');
             },
           );
         });
@@ -33,12 +33,13 @@ class LocalWebSocketServer {
         request.response
           ..statusCode = HttpStatus.forbidden
           ..close();
+        debugPrint('[wsServer] disconnesso');
       }
     });
   }
 
   Future<void> stop() async {
     await _server.close();
-    debugPrint('WebSocket server stoppato');
+    debugPrint('[wsServer] stoppato');
   }
 }

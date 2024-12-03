@@ -1,9 +1,9 @@
-import 'package:app_ws/mutex/ricart_agrawala.dart';
 import 'package:flutter/material.dart';
+import 'package:fuori_nevica/config.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
 import 'node.dart';
-import 'package:app_ws/config.dart';
+import 'ricart_agrawala.dart';
 
 class CommunicationManager {
   int nodeId;

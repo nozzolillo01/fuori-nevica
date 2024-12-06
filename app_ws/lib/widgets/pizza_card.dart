@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 class PizzaCard extends StatelessWidget {
   final String pizza;
 
-  const PizzaCard({required this.pizza});
+  const PizzaCard({super.key, required this.pizza});
 
   @override
   Widget build(BuildContext context) {

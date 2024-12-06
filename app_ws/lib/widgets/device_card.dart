@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class DeviceCard extends StatelessWidget {
   final Node device;
 
-  const DeviceCard({required this.device});
+  const DeviceCard({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {

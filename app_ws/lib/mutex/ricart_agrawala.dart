@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:fuori_nevica/mutex/communication_manager.dart';
-import 'package:fuori_nevica/mutex/node.dart';
 import 'package:flutter/material.dart';
 
 class RicartAgrawala {
@@ -32,14 +31,14 @@ class RicartAgrawala {
     communicationManager.multicastMessage(message);
   }
 
-  void handleReply(Map<String, dynamic> data, Node node) {
+  void handleReply(Map<String, dynamic> data) {
     _replies[data['nodeId']] = true;
     if (_allRepliesReceived()) {
       _accessResource();
     }
   }
 
-  void handleRequest(Map<String, dynamic> data, Node node) {
+  void handleRequest(Map<String, dynamic> data) {
     final otherNodeId = data['nodeId'];
     final otherTimestamp = data['timestamp'];
 

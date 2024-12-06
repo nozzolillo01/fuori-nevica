@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SetupPage extends StatefulWidget {
+  const SetupPage({super.key});
+
   @override
   _SetupPageState createState() => _SetupPageState();
 }

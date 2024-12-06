@@ -1,4 +1,3 @@
-import 'package:fuori_nevica/mutex/local_ws.dart';
 import 'package:fuori_nevica/viewmodels/setup_provider.dart';
 import 'package:fuori_nevica/views/loading_page.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +14,13 @@ void main() async {
       debugPrint("App in background");
     } else if (message == 'AppLifecycleState.detached') {
       debugPrint("App chiusa");
+      //TODO close server
     }
 
     return null;
   });
 
-  _startLocalWS();
-
   runApp(const App());
-}
-
-Future<void> _startLocalWS() async {
-  await LocalWebSocketServer().start();
 }
 
 class App extends StatelessWidget {

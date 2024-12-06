@@ -51,6 +51,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
       communicationManager.nodeId = myId;
       communicationManager.nodeName = myName;
       for (var peer in knownPeers) {
+        if (peer['indirizzo'] == myIp) continue;
+
         communicationManager.addNode(peer['indirizzo'], name: peer['nome']);
       }
 

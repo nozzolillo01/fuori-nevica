@@ -18,14 +18,14 @@ class LocalWebSocketServer {
           debugPrint('Client connesso');
           websocket.listen(
             (message) {
-              debugPrint('[wsServer] ricevuto: $message');
+              debugPrint('[ws-server] ricevuto: $message');
               websocket.add('$message'); // Risponde al client
             },
             onDone: () {
-              debugPrint('[wsServer] disconnesso');
+              debugPrint('[ws-server] disconnesso');
             },
             onError: (error) {
-              debugPrint('[wsServer] errore: $error');
+              debugPrint('[ws-server] errore: $error');
             },
           );
         });

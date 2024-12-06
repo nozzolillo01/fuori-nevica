@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/config.dart';
 import 'package:web_socket_channel/io.dart';
@@ -9,6 +10,35 @@ class CommunicationManager {
   int nodeId;
   String nodeName;
   List<Node> peers = [];
+  HttpServer? _server;
+
+  void _startServer() async {
+    const port = Shared.websocketPort;
+    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
+    debugPrint('WebSocket server listening on ws://localhost:$port');
+
+    _server?.listen((HttpRequest request) async {
+      if (WebSocketTransformer.isUpgradeRequest(request)) {
+        WebSocket socket = await WebSocketTransformer.upgrade(request);
+
+        socket.listen(
+          (message) {
+            debugPrint('[ws-server] received : $message');
+            _handleMessage(message);
+          },
+          onDone: () {
+            debugPrint('[ws-server] anyone disconnected');
+          },
+          onError: (error) {
+            debugPrint('[ws-server] error : $error');
+          },
+        );
+      } else {
+        request.response.statusCode = HttpStatus.forbidden;
+        request.response.close();
+      }
+    });
+  }
 
   static final CommunicationManager _instance =
       CommunicationManager._internal();
@@ -20,7 +50,9 @@ class CommunicationManager {
   CommunicationManager._internal()
       : nodeId = 0,
         nodeName = 'SCONOSCIUTO',
-        peers = [];
+        peers = [] {
+    _startServer();
+  }
 
   void addNode(String address, {String name = 'SCONOSCIUTO'}) {
     try {
@@ -29,17 +61,21 @@ class CommunicationManager {
       peers.add(node);
 
       //TODO message snackbar connessione persa con ...
-      channel.stream.listen(
-        (message) {
-          _handleMessage(message, node);
-        },
-        onDone: () {
-          node.isConnected = false;
-        },
-        onError: (error) {
-          node.isConnected = false;
-        },
-      );
+      if (channel != null) {
+        channel.stream.listen(
+          (message) {
+            debugPrint('[ws-client] sent to $address: $message');
+          },
+          onDone: () {
+            debugPrint('[ws-client] done $address');
+            node.isConnected = false;
+          },
+          onError: (error) {
+            debugPrint('[ws-client] error from $address: $error');
+            node.isConnected = false;
+          },
+        );
+      }
     } catch (e) {
       debugPrint('Errore connessione a $address: $e');
     }
@@ -47,9 +83,7 @@ class CommunicationManager {
 
   void multicastMessage(String message) {
     for (var peer in peers) {
-      if (peer.isConnected) {
-        peer.sendMessage(message);
-      }
+      peer.sendMessage(message);
     }
   }
 
@@ -64,20 +98,36 @@ class CommunicationManager {
     multicastMessage(message);
   }
 
-  void _handleMessage(String message, Node node) {
+  void removeNode(String address) {
+    if (!peers.any((p) => p.address == address)) return;
+
+    //node.close();
+    peers.removeWhere((p) => p.address == address);
+  }
+
+  Future<void> _handleMessage(String message) async {
     final data = jsonDecode(message);
 
+    if (data['nodeAddress'] == await Shared.getIpAddress()) {
+      return;
+    }
+
     if (data['type'] == 'join') {
-      //TODO check if already exists
+      removeNode(data['nodeAddress']);
       addNode(data['nodeAddress'], name: data['nodeName']);
     } else if (data['type'] == 'request') {
-      RicartAgrawala().handleRequest(data, node);
+      RicartAgrawala().handleRequest(data);
     } else if (data['type'] == 'reply') {
-      RicartAgrawala().handleReply(data, node);
+      RicartAgrawala().handleReply(data);
     }
   }
 
-  IOWebSocketChannel _createChannel(String address) {
-    return IOWebSocketChannel.connect('ws://$address:${Shared.websocketPort}');
+  IOWebSocketChannel? _createChannel(String address) {
+    try {
+      return IOWebSocketChannel.connect(
+          'ws://$address:${Shared.websocketPort}');
+    } catch (e) {
+      return null;
+    }
   }
 }

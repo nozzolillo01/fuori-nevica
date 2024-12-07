@@ -1,10 +1,9 @@
 # **Fuori Nevica**
 
-Un progetto per [descrizione sintetica del progetto]. Questo repository contiene [spiega brevemente cosa c'è nel repository].
+Un progetto per il corso di distributed system. Questo repository contiene l'intero progetto e la relativa presentazione.
 
 ## **Indice**
 - [Descrizione](#descrizione)
-- [Funzionalità](#funzionalità)
 - [Requisiti](#requisiti)
 - [Installazione](#installazione)
 - [Uso](#uso)
@@ -18,13 +17,6 @@ Un progetto per [descrizione sintetica del progetto]. Questo repository contiene
 
 ---
 
-## **Funzionalità**
-- [Funzionalità 1: Breve descrizione]
-- [Funzionalità 2: Breve descrizione]
-- [Funzionalità 3: Breve descrizione]
-- [Altre funzionalità, se applicabile]
-
----
 
 ## **Requisiti**
 Prima di iniziare, assicurati di avere installato quanto segue:

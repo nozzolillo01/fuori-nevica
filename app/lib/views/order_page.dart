@@ -1,3 +1,4 @@
+import 'package:fuori_nevica/models/pizza.dart';
 import 'package:fuori_nevica/viewmodels/order_provider.dart';
 import 'package:fuori_nevica/views/setup_page.dart';
 import 'package:fuori_nevica/widgets/pizza_card.dart';
@@ -24,7 +25,7 @@ class _OrderPageState extends State<OrderPage> {
             icon: const Icon(Icons.settings),
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SetupPage()),
+              MaterialPageRoute(builder: (context) => const SetupPage()),
             ),
           ),
         ],
@@ -56,7 +57,7 @@ class _OrderPageState extends State<OrderPage> {
                         _showConfirmationDialog(context, pizzaOrderModel),
                     child: const Row(
                       children: [
-                        Text('Place Order'),
+                        Text('CONFERMA'),
                         Icon(Icons.check),
                       ],
                     ),
@@ -65,7 +66,7 @@ class _OrderPageState extends State<OrderPage> {
                   ElevatedButton(
                     child: const Row(
                       children: [
-                        Text('Reset Order'),
+                        Text('AZZERA'),
                         Icon(Icons.clear),
                       ],
                     ),
@@ -80,65 +81,14 @@ class _OrderPageState extends State<OrderPage> {
     );
   }
 
-  void _showEditIngredientsDialog(
-      BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
-    final ingredients = pizzaOrderModel.getPizzaIngredients(pizza);
-    final selectedIngredients = List<String>.from(ingredients);
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Edit Ingredients for $pizza'),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: ingredients.map((ingredient) {
-                  return CheckboxListTile(
-                    title: Text(ingredient),
-                    value: selectedIngredients.contains(ingredient),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        if (value == true) {
-                          selectedIngredients.add(ingredient);
-                        } else {
-                          selectedIngredients.remove(ingredient);
-                        }
-                      });
-                    },
-                  );
-                }).toList(),
-              );
-            },
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                pizzaOrderModel.addCustomPizza(pizza, selectedIngredients);
-                pizzaOrderModel.addToOrder(pizza);
-                Navigator.of(context).pop();
-              },
-              child: const Text('Add to Order'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showConfirmationDialog(
       BuildContext context, OrderProvider pizzaOrderModel) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Order'),
-          content: const Text('Are you sure you want to PLACE the order?'),
+          title: const Text('CONFERMA'),
+          content: const Text('SEI SICURO DI VOLER CONFERMARE L\'ORDINE?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -148,10 +98,14 @@ class _OrderPageState extends State<OrderPage> {
               onPressed: () {
                 pizzaOrderModel.placeOrder();
                 Navigator.of(context).pop();
-                _showSnackBar(
-                    context, 'Order placed successfully!', Colors.green);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.green,
+                    content: Text("Ordine inviato!"),
+                  ),
+                );
               },
-              child: const Text('Confirm'),
+              child: const Text('CONFERMA'),
             ),
           ],
         );
@@ -175,28 +129,18 @@ class _OrderPageState extends State<OrderPage> {
               onPressed: () {
                 pizzaOrderModel.resetOrder();
                 Navigator.of(context).pop();
-                _showSnackBar(context, 'Order reset successfully!', Colors.red);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text("Ordine azzerato!"),
+                  ),
+                );
               },
               child: const Text('Confirm'),
             ),
           ],
         );
       },
-    );
-  }
-
-  void _showSnackBar(BuildContext context, String message, Color color) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(fontSize: 24),
-        ),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(32.0),
-        duration: const Duration(seconds: 3),
-      ),
     );
   }
 }

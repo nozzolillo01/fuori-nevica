@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fuori_nevica/config.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
-import 'node.dart';
+import '../models/node.dart';
 import 'ricart_agrawala.dart';
 
 class CommunicationManager {
@@ -61,6 +61,16 @@ class CommunicationManager {
       peers.add(node);
 
       //TODO message snackbar connessione persa con ...
+      /*
+
+ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text("Consegna programmata!"),
+              ),
+            );
+
+      */
       if (channel != null) {
         channel.stream.listen(
           (message) {
@@ -82,6 +92,7 @@ class CommunicationManager {
   }
 
   void multicastMessage(String message) {
+    //TODO check if not connected
     for (var peer in peers) {
       peer.sendMessage(message);
     }

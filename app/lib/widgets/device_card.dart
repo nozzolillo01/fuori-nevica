@@ -1,4 +1,4 @@
-import 'package:fuori_nevica/mutex/node.dart';
+import 'package:fuori_nevica/models/node.dart';
 import 'package:flutter/material.dart';
 
 class DeviceCard extends StatelessWidget {

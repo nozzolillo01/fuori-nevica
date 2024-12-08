@@ -1,6 +1,6 @@
 import 'package:fuori_nevica/config.dart';
 import 'package:fuori_nevica/mutex/communication_manager.dart';
-import 'package:fuori_nevica/mutex/node.dart';
+import 'package:fuori_nevica/models/node.dart';
 import 'package:fuori_nevica/viewmodels/setup_provider.dart';
 import 'package:fuori_nevica/widgets/device_card.dart';
 import 'package:flutter/material.dart';

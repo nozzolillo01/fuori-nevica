@@ -7,9 +7,9 @@ app = Flask(__name__)
 # Inizializza il database
 def init_db():
     #delete the database file
-    import os
+    '''import os
     if os.path.exists('database.db'):
-        os.remove('database.db')
+        os.remove('database.db')'''
     
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -64,7 +64,7 @@ def get_camerieri():
     return jsonify(camerieri)
 
 #post per decrementare le quantità di vari ingredienti
-@app.route('/ingredienti/update', methods=['POST'])
+@app.route('/order', methods=['POST'])
 def update_ingredienti():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -72,40 +72,44 @@ def update_ingredienti():
     insufficient_pizzas = {}
     
     for pizza in data:
-        pizza_name = pizza['nome']
-        for ingrediente in pizza['ingredienti']:
-            cursor.execute('SELECT qta FROM ingredienti WHERE nome = ?', (ingrediente['nome'],))
+        ingredienti = list(data[pizza])
+        for ingrediente in ingredienti:
+            cursor.execute('SELECT qta FROM ingredienti WHERE nome = ?', (ingrediente,))
             result = cursor.fetchone()
+            
             if result is None:
-                if pizza_name not in insufficient_pizzas:
-                    insufficient_pizzas[pizza_name] = []
-                insufficient_pizzas[pizza_name].append({'ingrediente': ingrediente['nome'], 'error': 'Ingrediente non trovato'})
+                if pizza not in insufficient_pizzas:
+                    insufficient_pizzas[pizza] = []
+
+                insufficient_pizzas[pizza].append({
+                    ingrediente: 'Ingrediente non trovato'
+                })
                 continue
+
             available_qta = result[0]
-            if available_qta < ingrediente['qta']:
-                if pizza_name not in insufficient_pizzas:
-                    insufficient_pizzas[pizza_name] = []
-                insufficient_pizzas[pizza_name].append({
-                    'ingrediente': ingrediente['nome'],
-                    'available': available_qta,
-                    'requested': ingrediente['qta']
+            if available_qta < 1:
+                if pizza not in insufficient_pizzas:
+                    insufficient_pizzas[pizza] = []
+
+                insufficient_pizzas[pizza].append({
+                    ingrediente: "Non disponibile",
                 })
     
     if insufficient_pizzas:
         conn.close()
-        return jsonify({'error': 'Quantità insufficiente per alcune pizze', 'details': insufficient_pizzas}), 400
+        return jsonify(insufficient_pizzas), 400
     
     for pizza in data:
-        for ingrediente in pizza['ingredienti']:
+        for ingrediente in data[pizza]:
             cursor.execute('''
                 UPDATE ingredienti
                 SET qta = qta - ?
                 WHERE nome = ?
-            ''', (ingrediente['qta'], ingrediente['nome']))
+            ''', (1, ingrediente))
     
     conn.commit()
     conn.close()
-    return jsonify({'message': 'Ingredienti aggiornati'})
+    return "OK", 200
 
 # Endpoint per inserire un nuovo cameriere
 @app.route('/camerieri/register', methods=['POST'])

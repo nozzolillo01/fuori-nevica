@@ -37,14 +37,17 @@ class WebService {
     }
   }
 
-  Future<void> updateIngredienti(List<Map<String, dynamic>> pizze) async {
+  Future<dynamic> sendOrder(Map<String, List<String>> pizze) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/ingredienti/update'),
+      Uri.parse('$baseUrl/order'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(pizze),
     );
-    if (response.statusCode != 200) {
-      throw Exception('Failed to update ingredienti');
+
+    if (response.statusCode == 200) {
+      return 'Ordine inviato';
+    } else {
+      return jsonDecode(response.body);
     }
   }
 
@@ -56,9 +59,7 @@ class WebService {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      debugPrint('Registered as ${data['id']}');
-      return data['id'];
+      return jsonDecode(response.body)['id'];
     } else {
       return -1;
     }

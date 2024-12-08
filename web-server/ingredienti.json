@@ -1,0 +1,94 @@
+[
+    {
+        "nome": "Pomodoro",
+        "qta": 4
+    },
+    {
+        "nome": "Mozzarella",
+        "qta": 7
+    },
+    {
+        "nome": "Basilico",
+        "qta": 3
+    },
+    {
+        "nome": "Aglio",
+        "qta": 2
+    },
+    {
+        "nome": "Origano",
+        "qta": 5
+    },
+    {
+        "nome": "Prosciutto",
+        "qta": 6
+    },
+    {
+        "nome": "Carciofi",
+        "qta": 3
+    },
+    {
+        "nome": "Funghi",
+        "qta": 4
+    },
+    {
+        "nome": "Olive",
+        "qta": 8
+    },
+    {
+        "nome": "Provola",
+        "qta": 6
+    },
+    {
+        "nome": "Pepe",
+        "qta": 2
+    },
+    {
+        "nome": "Salame Piccante",
+        "qta": 5
+    },
+    {
+        "nome": "Gorgonzola",
+        "qta": 7
+    },
+    {
+        "nome": "Parmigiano",
+        "qta": 3
+    },
+    {
+        "nome": "Fontina",
+        "qta": 4
+    },
+    {
+        "nome": "Acciughe",
+        "qta": 6
+    },
+    {
+        "nome": "Capperi",
+        "qta": 2
+    },
+    {
+        "nome": "Olio d'Oliva",
+        "qta": 9
+    },
+    {
+        "nome": "Rosmarino",
+        "qta": 5
+    },
+    {
+        "nome": "Melanzane",
+        "qta": 3
+    },
+    {
+        "nome": "Ricotta",
+        "qta": 4
+    },
+    {
+        "nome": "Mozzarella di Bufala",
+        "qta": 2
+    },
+    {
+        "nome": "Verdure Grigliate",
+        "qta": 8
+    }
+]

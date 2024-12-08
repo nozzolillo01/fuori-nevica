@@ -1,9 +1,10 @@
+import 'package:fuori_nevica/models/pizza.dart';
 import 'package:fuori_nevica/viewmodels/order_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PizzaCard extends StatelessWidget {
-  final String pizza;
+  final Pizza pizza;
 
   const PizzaCard({super.key, required this.pizza});
 
@@ -22,7 +23,7 @@ class PizzaCard extends StatelessWidget {
         title: Row(
           children: [
             Expanded(
-              child: Text(pizza,
+              child: Text(pizza.nome,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
             ),
@@ -61,15 +62,15 @@ class PizzaCard extends StatelessWidget {
   }
 
   void _showEditIngredientsDialog(
-      BuildContext context, OrderProvider pizzaOrderModel, String pizza) {
-    final ingredients = pizzaOrderModel.getPizzaIngredients(pizza);
+      BuildContext context, OrderProvider pizzaOrderModel, Pizza pizza) {
+    final ingredients = pizza.ingredienti;
     final selectedIngredients = List<String>.from(ingredients);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Ingredients for $pizza'),
+          title: Text('MODIFCA INGREDIENTI DI ${pizza.nome}'),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
@@ -100,7 +101,6 @@ class PizzaCard extends StatelessWidget {
             TextButton(
               onPressed: () {
                 pizzaOrderModel.addCustomPizza(pizza, selectedIngredients);
-                pizzaOrderModel.addToOrder(pizza);
                 Navigator.of(context).pop();
               },
               child: const Text('Add to Order'),

@@ -17,8 +17,10 @@ class PizzaCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
+      color: Colors.white,
       elevation: 5,
       child: ListTile(
+        leading: const Icon(Icons.local_pizza, size: 30),
         contentPadding: const EdgeInsets.all(10),
         title: Row(
           children: [

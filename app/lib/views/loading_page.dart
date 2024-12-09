@@ -1,10 +1,8 @@
-import 'package:fuori_nevica/views/order_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/services/webservice.dart';
 import 'package:fuori_nevica/config.dart';
-import 'package:fuori_nevica/viewmodels/setup_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:fuori_nevica/mutex/communication_manager.dart';
+import 'package:fuori_nevica/views/order_page.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -59,17 +57,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
       setMessage("Notifico la mia presenza...");
       communicationManager.notifyJoin();
 
-      setMessage("Download degli ingredienti...");
+      /*setMessage("Download degli ingredienti...");
       final ingredienti = await webService.getIngredienti();
 
-      final setupProvider = Provider.of<SetupProvider>(context, listen: false);
-      setupProvider.setIngredienti(ingredienti);
+      setupProvider.setIngredienti(ingredienti);*/
 
       setMessage("Caricamento completato. Avvio...");
       _navigateToOrderPage();
     } catch (e) {
       setMessage("Errore durante l'inizializzazione dell'app: ${e.toString()}");
-
+      //TODO handle errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -97,7 +94,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       builder: (BuildContext context) {
         TextEditingController controller = TextEditingController();
         return AlertDialog(
-          title: const Text('Inserisci il nome del dispositivo'),
+          title: const Text('Assegna un nome al dispositivo'),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(hintText: "Nome dispositivo"),

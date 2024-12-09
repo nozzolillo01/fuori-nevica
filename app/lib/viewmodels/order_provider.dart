@@ -63,13 +63,13 @@ class OrderProvider extends ChangeNotifier {
 
     //TODO get consenso
     var result = WebService().sendOrder(wsOrder);
-    //TODO
-    //if result == (string) OK then resetOrder
-    //else result = (Map<String, Map<String, dynamic>>) error
+    if (result is String && result == 'OK') {
+      resetOrder();
+      return;
+    }
 
-    debugPrint(wsOrder.toString());
-    resetOrder();
-    notifyListeners();
+    //TODO show error
+    //else result = (Map<String, Map<String, dynamic>>) error
   }
 
   void resetOrder() {
@@ -78,7 +78,10 @@ class OrderProvider extends ChangeNotifier {
   }
 
   void addCustomPizza(Pizza pizza, List<String> ingredients) {
-    final customPizzaName = '${pizza.nome} (${ingredients.join(', ')})';
+    final removedIngredients =
+        pizza.ingredienti.toSet().difference(ingredients.toSet());
+    final customPizzaName =
+        '${pizza.nome} SENZA ${removedIngredients.join(', ')}';
     addToOrder(Pizza(customPizzaName, ingredients));
   }
 }

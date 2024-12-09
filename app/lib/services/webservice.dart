@@ -1,5 +1,4 @@
 import 'package:fuori_nevica/config.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -19,7 +18,7 @@ class WebService {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to load ingredienti');
+      throw Exception('Impossibile scaricare gli ingredienti');
     }
   }
 
@@ -33,7 +32,7 @@ class WebService {
             'nome': cameriere[2],
           }));
     } else {
-      throw Exception('Failed to load camerieri');
+      throw Exception('Impossibile scaricare i camerieri');
     }
   }
 

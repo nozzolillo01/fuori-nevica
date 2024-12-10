@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/models/pizza.dart';
+import 'package:fuori_nevica/mutex/ricart_agrawala.dart';
 import 'package:fuori_nevica/services/webservice.dart';
 
 class OrderProvider extends ChangeNotifier {
@@ -53,7 +54,15 @@ class OrderProvider extends ChangeNotifier {
 
   int getPizzaCount(Pizza pizza) => _order[pizza] ?? 0;
 
-  void placeOrder() {
+  Future<void> placeOrder() async {
+    //TODO get consenso
+    final algo = RicartAgrawala();
+    await algo.requestResource();
+    //processOrder();
+  }
+
+  void processOrder() async {
+    //TODO assicurarsi che gli ingredienti siano scalati localmente durante l'esecuzione dell'ordine
     Map<String, List<String>> wsOrder = {};
     for (final pizza in _order.keys) {
       for (var i = 0; i < _order[pizza]!; i++) {
@@ -61,15 +70,23 @@ class OrderProvider extends ChangeNotifier {
       }
     }
 
-    //TODO get consenso
-    var result = WebService().sendOrder(wsOrder);
+    var result = await WebService().sendOrder(wsOrder);
     if (result is String && result == 'OK') {
       resetOrder();
       return;
     }
 
     //TODO show error
-    //else result = (Map<String, Map<String, dynamic>>) error
+    final errors = result as Map<String, dynamic>;
+    for (final pizza in errors.keys) {
+      final error = errors[pizza]!;
+      print('Errore per $pizza:');
+      for (final errorDetail in error) {
+        errorDetail.forEach((key, value) {
+          debugPrint('$key: $value');
+        });
+      }
+    }
   }
 
   void resetOrder() {

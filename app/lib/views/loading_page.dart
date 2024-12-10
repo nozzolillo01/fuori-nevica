@@ -51,7 +51,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       for (var peer in knownPeers) {
         if (peer['indirizzo'] == myIp) continue;
 
-        communicationManager.addNode(peer['indirizzo'], name: peer['nome']);
+        communicationManager.addNode(peer['id'], peer['indirizzo'], name: peer['nome']);
       }
 
       setMessage("Notifico la mia presenza...");

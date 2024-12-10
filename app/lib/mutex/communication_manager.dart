@@ -54,10 +54,10 @@ class CommunicationManager {
     _startServer();
   }
 
-  void addNode(String address, {String name = 'SCONOSCIUTO'}) {
+  void addNode(int id, String address, {String name = 'SCONOSCIUTO'}) {
     try {
       final channel = _createChannel(address);
-      final node = Node(address, name, channel);
+      final node = Node(id, address, name, channel);
       peers.add(node);
 
       //TODO message snackbar connessione persa con ...
@@ -125,11 +125,11 @@ ScaffoldMessenger.of(context).showSnackBar(
 
     if (data['type'] == 'join') {
       removeNode(data['nodeAddress']);
-      addNode(data['nodeAddress'], name: data['nodeName']);
+      addNode(data['nodeId'], data['nodeAddress'], name: data['nodeName']);
     } else if (data['type'] == 'request') {
-      RicartAgrawala().handleRequest(data);
+      RicartAgrawala().receiveRequest(data);
     } else if (data['type'] == 'reply') {
-      RicartAgrawala().handleReply(data);
+      RicartAgrawala().receiveReply(data);
     }
   }
 

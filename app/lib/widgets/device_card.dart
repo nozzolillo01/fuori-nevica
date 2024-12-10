@@ -14,7 +14,7 @@ class DeviceCard extends StatelessWidget {
           Icons.circle,
           color: device.isConnected ? Colors.green : Colors.red,
         ),
-        title: Text(device.name),
+        title: Text('${device.name} (ID: ${device.id})'),
         subtitle: Text(device.address),
         trailing: const Icon(Icons.smartphone),
       ),

@@ -1,6 +1,6 @@
 # **Fuori Nevica**
 
-Un progetto per il corso di distributed system. Questo repository contiene l'intero progetto e la relativa presentazione.
+Un progetto per il corso di **Distributed Systems**. Questo repository contiene l'intero progetto e la relativa presentazione. L'applicazione è destinata ai camerieri di un ristorante, che possono usarla sui loro dispositivi Android per prendere ordinazioni ai tavoli. Utilizza l'algoritmo di **Ricart-Agrawala** per garantire l'accesso concorrente sicuro a un web server che gestisce un database di ingredienti.
 
 ## **Indice**
 - [Descrizione](#descrizione)
@@ -9,23 +9,31 @@ Un progetto per il corso di distributed system. Questo repository contiene l'int
 - [Uso](#uso)
 - [Contributi](#contributi)
 - [Licenza](#licenza)
+- [Contatti](#contatti)
 
 ---
 
 ## **Descrizione**
-**Fuori Nevica** è un progetto sviluppato per [scopo del progetto, ad esempio: monitorare il meteo, gestire una libreria di dati, ecc.]. È scritto utilizzando [linguaggio/framework utilizzato] e si focalizza su [aspetto principale del progetto].
+**Fuori Nevica** è un'applicazione mobile sviluppata per dispositivi Android, pensata per permettere ai camerieri di prendere le ordinazioni in un ristorante. L'app comunica con un **web server** che gestisce un database degli ingredienti disponibili per ciascun piatto. 
+
+L'app implementa l'algoritmo di **Ricart-Agrawala**, un algoritmo di **mutua esclusione** che garantisce che solo un cameriere alla volta possa accedere al server per modificare i dati degli ingredienti, evitando conflitti tra richieste simultanee.
+
+L'uso di questo algoritmo assicura che le operazioni di aggiornamento del database siano coerenti, anche quando più camerieri cercano di accedere contemporaneamente alle stesse risorse.
 
 ---
-
 
 ## **Requisiti**
 Prima di iniziare, assicurati di avere installato quanto segue:
-- [Linguaggio di programmazione richiesto, ad esempio: Python 3.8+]
-- [Framework, ad esempio: Node.js, Flutter, ecc.]
-- [Altro software richiesto]
-- [Sistema operativo supportato, se rilevante]
+
+- **Android Studio** (o altro IDE compatibile con Android)
+- **Java 8+** o **Kotlin** (per lo sviluppo dell'app Android)
+- **Node.js** (per il server backend)
+- **MySQL** o **PostgreSQL** (per il database degli ingredienti)
+- **Sistema operativo**: Android per l'app, qualsiasi sistema operativo per il server (Linux, Windows, macOS)
+- **Connessione di rete** per la comunicazione tra l'app e il server.
 
 ---
+
 
 ## **Installazione**
 Segui questi passaggi per configurare il progetto sul tuo ambiente locale:

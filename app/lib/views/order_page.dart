@@ -33,10 +33,18 @@ class OrderPageState extends State<OrderPage> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text('E FUORI NEVICA'),
+        centerTitle: true,
+        leading: Image.asset('assets/logo-icon.png', height: 40),
+        title: const Text(
+          'E Fuori Nevica',
+          style: TextStyle(
+              fontFamily: 'DancingScript',
+              fontWeight: FontWeight.bold,
+              fontSize: 32),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.phonelink_ring),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SetupPage()),

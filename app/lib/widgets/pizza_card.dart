@@ -20,7 +20,7 @@ class PizzaCard extends StatelessWidget {
       color: Colors.white,
       elevation: 5,
       child: ListTile(
-        leading: const Icon(Icons.local_pizza, size: 30),
+        leading: Image.asset('assets/pizza-icon.png', width: 48),
         contentPadding: const EdgeInsets.all(10),
         title: Row(
           children: [
@@ -29,19 +29,12 @@ class PizzaCard extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold)),
             ),
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.blueAccent),
-              iconSize: 30,
-              onPressed: () {
-                _showEditIngredientsDialog(context, pizzaOrderModel, pizza);
-              },
-            ),
           ],
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
+            /*IconButton(
               icon: const Icon(Icons.remove, color: Colors.redAccent),
               iconSize: 30,
               onPressed: () {
@@ -49,7 +42,14 @@ class PizzaCard extends StatelessWidget {
               },
             ),
             Text('${pizzaOrderModel.getPizzaCount(pizza)}',
-                style: const TextStyle(fontSize: 24)),
+                style: const TextStyle(fontSize: 24)),*/
+            IconButton(
+              icon: const Icon(Icons.edit),
+              iconSize: 30,
+              onPressed: () {
+                _showEditIngredientsDialog(context, pizzaOrderModel, pizza);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.add, color: Colors.green),
               iconSize: 30,
@@ -72,7 +72,7 @@ class PizzaCard extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('MODIFCA INGREDIENTI DI ${pizza.nome}'),
+          title: Text('MODIFICA INGREDIENTI DI ${pizza.nome}'),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
@@ -98,14 +98,14 @@ class PizzaCard extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: const Text('Annulla'),
             ),
             TextButton(
               onPressed: () {
                 pizzaOrderModel.addCustomPizza(pizza, selectedIngredients);
                 Navigator.of(context).pop();
               },
-              child: const Text('Add to Order'),
+              child: const Text('Aggiungi'),
             ),
           ],
         );

@@ -62,11 +62,6 @@ class _SetupPageState extends State<SetupPage> {
                 }
               },
             ),
-            ElevatedButton(
-              onPressed: _refreshPeers,
-              child: const Text('AGGIORNA'),
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: knownPeers.isNotEmpty
                   ? ListView.builder(
@@ -79,6 +74,19 @@ class _SetupPageState extends State<SetupPage> {
                   : const Center(
                       child: Text('Nessun altro cameriere registrato'),
                     ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: FloatingActionButton.extended(
+                backgroundColor: Colors.grey,
+                onPressed: _refreshPeers,
+                icon: const Icon(Icons.sync, color: Colors.white),
+                label: const Text(
+                  'AGGIORNA',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
+                heroTag: 'confirm',
+              ),
             ),
           ],
         ),

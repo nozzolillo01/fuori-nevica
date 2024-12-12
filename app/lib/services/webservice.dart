@@ -44,7 +44,7 @@ class WebService {
     );
 
     if (response.statusCode == 200) {
-      return 'Ordine inviato';
+      return 'OK';
     } else {
       return jsonDecode(response.body);
     }

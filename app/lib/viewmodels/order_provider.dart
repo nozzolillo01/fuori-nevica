@@ -54,17 +54,19 @@ class OrderProvider extends ChangeNotifier {
 
   int getPizzaCount(Pizza pizza) => _order[pizza] ?? 0;
 
-  Future<void> placeOrder() async {
+  Future<Map<String, dynamic>> placeOrder() async {
     final mutex = RicartAgrawala();
 
     await mutex.requestResource(); //LOCK
 
-    processOrder();
+    await Future.delayed(const Duration(seconds: 5));
+    final errors = processOrder();
 
     mutex.releaseResource(); //UNLOCK
+    return errors;
   }
 
-  void processOrder() async {
+  Future<Map<String, dynamic>> processOrder() async {
     Map<String, List<String>> wsOrder = {};
     for (final pizza in _order.keys) {
       for (var i = 0; i < _order[pizza]!; i++) {
@@ -75,18 +77,18 @@ class OrderProvider extends ChangeNotifier {
     var result = await WebService().sendOrder(wsOrder);
     if (result is String && result == 'OK') {
       resetOrder();
-      return;
+      return {};
     }
 
-    //TODO show error
-    final errors = result as Map<String, dynamic>;
-    for (final pizza in errors.keys) {
+    return result;
+
+    /* for (final pizza in errors.keys) {
       final error = errors[pizza]!;
       debugPrint('Errori per $pizza:');
       for (final errorDetail in error) {
         debugPrint(errorDetail);
       }
-    }
+    }*/
   }
 
   void resetOrder() {

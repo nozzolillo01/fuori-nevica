@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/config.dart';
+import 'package:fuori_nevica/services/webservice.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
 import '../models/node.dart';
@@ -61,6 +62,10 @@ class CommunicationManager {
 
   void addNode(int id, String address, {String name = 'SCONOSCIUTO'}) {
     try {
+      if (peers.any((p) => p.address == address)) {
+        removeNode(address);
+      }
+
       final channel = _createChannel(address);
       final node = Node(id, address, name, channel);
       peers.add(node);
@@ -90,6 +95,17 @@ class CommunicationManager {
       if (peer.isConnected) {
         peer.sendMessage(message);
       }
+    }
+  }
+
+  void refreshPeers() async {
+    final knownPeers = await WebService().getCamerieri();
+
+    for (var peer in knownPeers) {
+      if (peer['indirizzo'] == await Shared.getIpAddress()) continue;
+      if (peers.map((p) => p.address).contains(peer['indirizzo'])) continue;
+
+      addNode(peer['id'], peer['indirizzo'], name: peer['nome']);
     }
   }
 

@@ -40,7 +40,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       if (myself.isEmpty) {
         setMessage("Nuovo device, registrazione in corso...");
 
-        String myName = await _inputDeviceName();
+        myName = await _inputDeviceName();
         myId = await webService.register(myIp, myName);
       } else {
         setMessage("Recupero il mio id...");

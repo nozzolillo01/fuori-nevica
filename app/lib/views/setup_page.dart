@@ -23,6 +23,7 @@ class _SetupPageState extends State<SetupPage> {
 
   Future<void> _refreshPeers() async {
     setState(() {
+      communicationManager.refreshPeers();
       knownPeers = communicationManager.peers;
     });
   }

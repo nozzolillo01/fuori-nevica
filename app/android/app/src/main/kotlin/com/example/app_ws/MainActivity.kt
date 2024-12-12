@@ -1,4 +1,4 @@
-package com.example.app_ws
+package com.sman.fuori_nevica
 
 import io.flutter.embedding.android.FlutterActivity
 

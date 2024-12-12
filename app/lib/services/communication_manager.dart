@@ -4,7 +4,7 @@ import 'package:fuori_nevica/config.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
 import '../models/node.dart';
-import 'ricart_agrawala.dart';
+import '../mutex/ricart_agrawala.dart';
 
 class CommunicationManager {
   int nodeId;
@@ -40,6 +40,11 @@ class CommunicationManager {
     });
   }
 
+  void reset() {
+    _server?.close(force: true);
+    peers.clear();
+  }
+
   static final CommunicationManager _instance =
       CommunicationManager._internal();
 
@@ -60,24 +65,13 @@ class CommunicationManager {
       final node = Node(id, address, name, channel);
       peers.add(node);
 
-      //TODO message snackbar connessione persa con ...
-      /*
-
-ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                backgroundColor: Colors.red,
-                content: Text("Consegna programmata!"),
-              ),
-            );
-
-      */
       if (channel != null) {
         channel.stream.listen(
           (message) {
             debugPrint('[ws-client] sent to $address: $message');
           },
           onDone: () {
-            debugPrint('[ws-client] done $address');
+            debugPrint('[ws-client] closed $address');
             node.isConnected = false;
           },
           onError: (error) {
@@ -92,9 +86,10 @@ ScaffoldMessenger.of(context).showSnackBar(
   }
 
   void multicastMessage(String message) {
-    //TODO check if not connected
     for (var peer in peers) {
-      peer.sendMessage(message);
+      if (peer.isConnected) {
+        peer.sendMessage(message);
+      }
     }
   }
 

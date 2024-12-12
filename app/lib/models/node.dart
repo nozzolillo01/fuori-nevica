@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 
 class Node {
@@ -6,10 +7,21 @@ class Node {
   IOWebSocketChannel? channel;
   bool isConnected;
 
-  Node(this.id, this.address, this.name, this.channel) : isConnected = channel != null;
+  Node(this.id, this.address, this.name, this.channel)
+      : isConnected = channel != null;
 
   void sendMessage(String message) {
-    channel!.sink.add(message);
+    if (channel == null) {
+      isConnected = false;
+      return;
+    }
+
+    try {
+      channel!.sink.add(message);
+    } catch (e) {
+      isConnected = false;
+      debugPrint(e.toString());
+    }
   }
 
   void close() {

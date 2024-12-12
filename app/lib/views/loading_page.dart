@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/services/webservice.dart';
 import 'package:fuori_nevica/config.dart';
-import 'package:fuori_nevica/mutex/communication_manager.dart';
+import 'package:fuori_nevica/services/communication_manager.dart';
 import 'package:fuori_nevica/views/order_page.dart';
 import 'package:fuori_nevica/widgets/loading_indicator.dart';
 
@@ -20,7 +20,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialize();
+    });
   }
 
   Future<void> _initialize() async {
@@ -41,7 +43,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
         String myName = await _inputDeviceName();
         myId = await webService.register(myIp, myName);
       } else {
-        //TODO notify join
         setMessage("Recupero il mio id...");
         myId = myself.first['id'];
         myName = myself.first['nome'];
@@ -62,11 +63,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
       await Future.delayed(const Duration(seconds: 1));
       communicationManager.notifyJoin();
 
-      /*setMessage("Download degli ingredienti...");
-      final ingredienti = await webService.getIngredienti();
-
-      setupProvider.setIngredienti(ingredienti);*/
-
       setMessage("Caricamento completato. Avvio...");
       await Future.delayed(const Duration(seconds: 1));
       Navigator.pushReplacement(
@@ -77,7 +73,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
       );
     } catch (e) {
       setMessage("Errore durante l'inizializzazione dell'app: ${e.toString()}");
-      //TODO handle errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );

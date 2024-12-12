@@ -6,11 +6,6 @@ app = Flask(__name__)
 
 # Inizializza il database
 def init_db():
-    #delete the database file
-    '''import os
-    if os.path.exists('database.db'):
-        os.remove('database.db')'''
-    
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('''
@@ -69,32 +64,28 @@ def update_ingredienti():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     data = request.json
+
     insufficient_pizzas = {}
+    current_qtas = {}
     
     for pizza in data:
         ingredienti = list(data[pizza])
+
         for ingrediente in ingredienti:
-            cursor.execute('SELECT qta FROM ingredienti WHERE nome = ?', (ingrediente,))
-            result = cursor.fetchone()
-            
-            if result is None:
+            if(ingrediente in current_qtas):
+                available_qta = current_qtas[ingrediente]
+            else:
+                cursor.execute('SELECT qta FROM ingredienti WHERE nome = ?', (ingrediente,))
+                available_qta = cursor.fetchone()[0]
+           
+            if(available_qta < 1):
                 if pizza not in insufficient_pizzas:
                     insufficient_pizzas[pizza] = []
 
-                insufficient_pizzas[pizza].append({
-                    ingrediente: 'Ingrediente non trovato'
-                })
-                continue
+                insufficient_pizzas[pizza].append(f"{ingrediente} non disponibile")
+            else:
+                current_qtas[ingrediente] = available_qta - 1
 
-            available_qta = result[0]
-            if available_qta < 1:
-                if pizza not in insufficient_pizzas:
-                    insufficient_pizzas[pizza] = []
-
-                insufficient_pizzas[pizza].append({
-                    ingrediente: "Non disponibile",
-                })
-    
     if insufficient_pizzas:
         conn.close()
         return jsonify(insufficient_pizzas), 400

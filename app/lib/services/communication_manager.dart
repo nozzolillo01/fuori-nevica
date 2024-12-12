@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/config.dart';
+import 'package:fuori_nevica/services/webservice.dart';
 import 'package:web_socket_channel/io.dart';
 import 'dart:convert';
 import '../models/node.dart';
-import 'ricart_agrawala.dart';
+import '../mutex/ricart_agrawala.dart';
 
 class CommunicationManager {
   int nodeId;
@@ -40,6 +41,11 @@ class CommunicationManager {
     });
   }
 
+  void reset() {
+    _server?.close(force: true);
+    peers.clear();
+  }
+
   static final CommunicationManager _instance =
       CommunicationManager._internal();
 
@@ -56,28 +62,21 @@ class CommunicationManager {
 
   void addNode(int id, String address, {String name = 'SCONOSCIUTO'}) {
     try {
+      if (peers.any((p) => p.address == address)) {
+        removeNode(address);
+      }
+
       final channel = _createChannel(address);
       final node = Node(id, address, name, channel);
       peers.add(node);
 
-      //TODO message snackbar connessione persa con ...
-      /*
-
-ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                backgroundColor: Colors.red,
-                content: Text("Consegna programmata!"),
-              ),
-            );
-
-      */
       if (channel != null) {
         channel.stream.listen(
           (message) {
             debugPrint('[ws-client] sent to $address: $message');
           },
           onDone: () {
-            debugPrint('[ws-client] done $address');
+            debugPrint('[ws-client] closed $address');
             node.isConnected = false;
           },
           onError: (error) {
@@ -92,9 +91,21 @@ ScaffoldMessenger.of(context).showSnackBar(
   }
 
   void multicastMessage(String message) {
-    //TODO check if not connected
     for (var peer in peers) {
-      peer.sendMessage(message);
+      if (peer.isConnected) {
+        peer.sendMessage(message);
+      }
+    }
+  }
+
+  void refreshPeers() async {
+    final knownPeers = await WebService().getCamerieri();
+
+    for (var peer in knownPeers) {
+      if (peer['indirizzo'] == await Shared.getIpAddress()) continue;
+      if (peers.map((p) => p.address).contains(peer['indirizzo'])) continue;
+
+      addNode(peer['id'], peer['indirizzo'], name: peer['nome']);
     }
   }
 

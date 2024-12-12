@@ -23,5 +23,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: DancingScript
+      fonts:
+        - asset: assets/dancing-script.ttf
   assets:
     - assets/

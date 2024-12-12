@@ -1,3 +1,4 @@
+import 'package:fuori_nevica/services/communication_manager.dart';
 import 'package:fuori_nevica/views/loading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,7 @@ void main() async {
   SystemChannels.lifecycle.setMessageHandler((message) async {
     if (message == 'AppLifecycleState.detached') {
       debugPrint("App chiusa");
+      CommunicationManager().reset(); //TODO Check
     }
 
     return null;

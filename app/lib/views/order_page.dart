@@ -3,6 +3,7 @@ import 'package:fuori_nevica/viewmodels/order_provider.dart';
 import 'package:fuori_nevica/views/order_edit.dart';
 import 'package:fuori_nevica/views/order_resume.dart';
 import 'package:fuori_nevica/views/setup_page.dart';
+import 'package:fuori_nevica/widgets/loading_indicator.dart';
 import 'package:provider/provider.dart';
 
 class OrderPage extends StatefulWidget {
@@ -33,10 +34,18 @@ class OrderPageState extends State<OrderPage> {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text('E FUORI NEVICA'),
+        centerTitle: true,
+        leading: Image.asset('assets/logo-icon.png', height: 40),
+        title: const Text(
+          'E Fuori Nevica',
+          style: TextStyle(
+              fontFamily: 'DancingScript',
+              fontWeight: FontWeight.bold,
+              fontSize: 32),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.phonelink_ring),
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SetupPage()),
@@ -115,17 +124,59 @@ class OrderPageState extends State<OrderPage> {
               child: const Text('ANNULLA'),
             ),
             TextButton(
-              onPressed: () {
-                pizzaOrderModel.placeOrder();
+              onPressed: () async {
+                _showLoadingDialog(context, pizzaOrderModel);
+                final errors = await pizzaOrderModel.placeOrder();
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    backgroundColor: Colors.green,
-                    content: Text("Ordine inviato!"),
-                  ),
-                );
+                Navigator.of(context).pop();
+                if (errors.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.green,
+                      content: Text("Ordine inviato!"),
+                    ),
+                  );
+                } else {
+                  _showErrorDialog(context, pizzaOrderModel, errors);
+                }
               },
               child: const Text('CONFERMA'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLoadingDialog(BuildContext context, OrderProvider pizzaOrderModel) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text('INVIO ORDINE'),
+          content: WiFiAnimation(size: 200),
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, OrderProvider pizzaOrderModel,
+      Map<String, dynamic> errors) {
+    //TODO grafica
+    final errorString = errors.entries
+        .map((entry) =>
+            'x1 ${entry.key.toUpperCase().split("_")[0]}:\n${entry.value.join(', ')}\n')
+        .join('\n');
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('ATTENZIONE!'),
+          content: Text('L\'ORDINE NON PUÒ ESSERE REALIZZATO:\n$errorString'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
             ),
           ],
         );

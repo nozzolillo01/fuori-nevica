@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/services/webservice.dart';
 import 'package:fuori_nevica/config.dart';
-import 'package:fuori_nevica/mutex/communication_manager.dart';
+import 'package:fuori_nevica/services/communication_manager.dart';
 import 'package:fuori_nevica/views/order_page.dart';
+import 'package:fuori_nevica/widgets/loading_indicator.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -19,7 +20,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
-    _initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialize();
+    });
   }
 
   Future<void> _initialize() async {
@@ -28,6 +31,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
       final myIp = await Shared.getIpAddress();
 
       setMessage("Download degli altri nodi...");
+      await Future.delayed(const Duration(seconds: 3));
       final knownPeers = await webService.getCamerieri();
       final myself = knownPeers.where((peer) => peer['indirizzo'] == myIp);
 
@@ -36,37 +40,39 @@ class _LoadingScreenState extends State<LoadingScreen> {
       if (myself.isEmpty) {
         setMessage("Nuovo device, registrazione in corso...");
 
-        String myName = await _inputDeviceName();
+        myName = await _inputDeviceName();
         myId = await webService.register(myIp, myName);
       } else {
-        //TODO notify join
         setMessage("Recupero il mio id...");
         myId = myself.first['id'];
         myName = myself.first['nome'];
       }
 
       setMessage("Inizializzazione del Mutex...");
+      await Future.delayed(const Duration(seconds: 2));
       communicationManager.nodeId = myId;
       communicationManager.nodeName = myName;
       for (var peer in knownPeers) {
         if (peer['indirizzo'] == myIp) continue;
 
-        communicationManager.addNode(peer['id'], peer['indirizzo'], name: peer['nome']);
+        communicationManager.addNode(peer['id'], peer['indirizzo'],
+            name: peer['nome']);
       }
 
       setMessage("Notifico la mia presenza...");
+      await Future.delayed(const Duration(seconds: 1));
       communicationManager.notifyJoin();
 
-      /*setMessage("Download degli ingredienti...");
-      final ingredienti = await webService.getIngredienti();
-
-      setupProvider.setIngredienti(ingredienti);*/
-
       setMessage("Caricamento completato. Avvio...");
-      _navigateToOrderPage();
+      await Future.delayed(const Duration(seconds: 1));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OrderPage(),
+        ),
+      );
     } catch (e) {
       setMessage("Errore durante l'inizializzazione dell'app: ${e.toString()}");
-      //TODO handle errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -77,15 +83,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
     setState(() {
       statusMessage = message;
     });
-  }
-
-  void _navigateToOrderPage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const OrderPage(),
-      ),
-    );
   }
 
   Future<String> _inputDeviceName() async {
@@ -121,8 +118,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 20),
+            //const CircularProgressIndicator(),
+            const WiFiAnimation(
+              size: 200,
+            ),
+            //const SizedBox(height: 20),
             Text(
               statusMessage,
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),

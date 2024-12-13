@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="cards">
+    <div class="card">
+        <img src="{{ url_for('static', filename='camerieri.jpg') }}" alt="Camerieri">
+        <h3>Camerieri</h3>
+        <p>Gestisci i tuoi camerieri.</p>
+        <a href="{{ url_for('admin.gestisci_camerieri') }}" class="button">Vai</a>
+    </div>
+    <div class="card">
+        <img src="{{ url_for('static', filename='ingredienti.jpg') }}" alt="Ingredienti">
+        <h3>Ingredienti</h3>
+        <p>Gestisci gli ingredienti del magazzino.</p>
+        <a href="{{ url_for('admin.gestisci_ingredienti') }}" class="button">Vai</a>
+    </div>
+</div>
+{% endblock %}

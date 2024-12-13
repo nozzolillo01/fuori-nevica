@@ -37,13 +37,19 @@ class RicartAgrawala {
     });
 
     communicationManager.multicastMessage(message);
-    debugPrint("inviato $message\nATTENDO REPLIES");
+    debugPrint("[${getTime()}] INVIATA REQUEST, ATTENDO REPLIES");
+    debugPrint("[${getTime()}] $message");
     while (!_allRepliesReceived()) {
       await Future.delayed(const Duration(milliseconds: 100));
     }
 
-    debugPrint("RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA");
+    debugPrint("[${getTime()}] RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA");
     _accessResource();
+  }
+
+  String getTime() {
+    final now = DateTime.now();
+    return '${now.hour}:${now.minute}:${now.second}:${now.millisecond}';
   }
 
   void receiveReply(Map<String, dynamic> data) {
@@ -59,17 +65,17 @@ class RicartAgrawala {
     final otherTimestamp = data['timestamp'] as int;
 
     debugPrint(
-        'RICEVUTA RICHIESTA <ID: $otherNodeId, TIMESTAMP: $otherTimestamp>');
+        '[${getTime()}] RICEVUTA RICHIESTA <ID: $otherNodeId, TIMESTAMP: $otherTimestamp>');
     _currentTimestamp = max(_currentTimestamp, otherTimestamp) + 1;
 
     debugPrint(
-        'SONO NELLO STATO $_state, MIO TIMESTAMP: $_currentTimestamp, MIO ID: ${communicationManager.nodeId}');
+        '[${getTime()}] SONO NELLO STATO $_state, MIO TIMESTAMP: $_currentTimestamp, MIO ID: ${communicationManager.nodeId}');
     if (!_shouldQueue(otherTimestamp, otherNodeId)) {
       //REPLY IMMEDIATA
-      debugPrint('INVIO REPLY');
+      debugPrint('[${getTime()}] INVIO REPLY');
       _sendReply(otherNodeId);
     } else {
-      debugPrint('ACCODO RICHIESTA');
+      debugPrint('[${getTime()}] ACCODO RICHIESTA');
       _queue.add(otherNodeId);
     }
   }
@@ -104,15 +110,16 @@ class RicartAgrawala {
 
   void _accessResource() async {
     _state = MutexState.held;
-    debugPrint('ACCEDO ALLA RISORSA CONDIVISA');
+    debugPrint('[${getTime()}] ACCEDO ALLA RISORSA CONDIVISA');
   }
 
   void releaseResource() {
     _state = MutexState.released;
     _replies = [];
 
-    debugPrint('RILASCIO LA RISORSA, RISPONDO ALLA QUEUE');
+    debugPrint('[${getTime()}] RILASCIO LA RISORSA, RISPONDO ALLA QUEUE');
     for (final nodeId in _queue) {
+      debugPrint('[${getTime()}] INVIO REPLY AL NODO $nodeId IN CODA');
       _sendReply(nodeId);
     }
 

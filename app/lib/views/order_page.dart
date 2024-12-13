@@ -112,6 +112,17 @@ class OrderPageState extends State<OrderPage> {
 
   void _showConfirmationDialog(
       BuildContext context, OrderProvider pizzaOrderModel) {
+    if (pizzaOrderModel.order.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("L'ordine attuale è vuoto!"),
+        ),
+      );
+
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {

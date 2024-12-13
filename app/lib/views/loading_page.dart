@@ -72,7 +72,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
         ),
       );
     } catch (e) {
-      setMessage("Errore durante l'inizializzazione dell'app: ${e.toString()}");
+      setMessage(
+          "Impossibile connettersi al server, verifica la tua connessione alla rete ed al server, e riavvia l'applicazione");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );

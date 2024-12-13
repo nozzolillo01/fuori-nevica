@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Gestione Ingredienti{% endblock %}
+
+{% block content %}
+<h2>Gestione Ingredienti</h2>
+<form method="POST" action="{{ url_for('admin.aggiungi_ingrediente') }}" class="form-inline">
+    <input type="text" name="nome" placeholder="Nome Ingrediente" required class="input-field">
+    <input type="number" name="qta" placeholder="Quantità" min="0" required class="input-field">
+    <button type="submit" class="button">Aggiungi Ingrediente</button>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Quantità</th>
+            <th>Azioni</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ingrediente in ingredienti %}
+        <tr>
+            <td>{{ ingrediente[0] }}</td>
+            <td>{{ ingrediente[1] }}</td>
+            <!-- Modifica la cella quantità in un campo di input -->
+            <td>
+                <form method="POST" action="{{ url_for('admin.modifica_ingrediente', id=ingrediente[0]) }}" style="display:inline;">
+                    <input type="number" name="qta" value="{{ ingrediente[2] }}" min="0" required class="input-field">
+                    <button type="submit" class="button">Modifica</button>
+                </form>
+            </td>
+            <td>
+                <!-- Form per eliminare l'ingrediente -->
+                <form method="POST" action="{{ url_for('admin.elimina_ingrediente', id=ingrediente[0]) }}" style="display:inline;">
+                    <button type="submit" class="button danger">Elimina</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

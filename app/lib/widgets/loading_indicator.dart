@@ -22,7 +22,7 @@ class _WiFiAnimationState extends State<WiFiAnimation>
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat(); // Ripeti l'animazione all'infinito
+    )..repeat();
   }
 
   @override

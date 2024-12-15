@@ -67,6 +67,37 @@ def update_ingredienti():
     conn.close()
     return "OK", 200
 
+@api_bp.route('/log', methods=['POST'])
+def log():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    data = request.json
+    cursor.execute('INSERT INTO logs (dispositivo, messaggio) VALUES (?, ?)', (data['dispositivo'], data['msg']))
+    conn.commit()
+
+    return "OK", 200
+
+@api_bp.route('/logs', methods=['GET'])
+def read_logs():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM logs')
+    logs_raw = cursor.fetchall()
+    
+    logs = {}
+    for log in logs_raw:
+        device = log[1]
+        if device in logs:
+            logs[device].append(log[2])
+        else:
+            logs[device] = [log[2]]
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"logs": logs})
+
 @api_bp.route('/camerieri/register', methods=['POST'])
 def add_cameriere():
     conn = get_db_connection()

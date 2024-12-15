@@ -5,14 +5,14 @@ import 'package:fuori_nevica/services/communication_manager.dart';
 import 'package:fuori_nevica/views/order_page.dart';
 import 'package:fuori_nevica/widgets/loading_indicator.dart';
 
-class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({super.key});
+class InitPage extends StatefulWidget {
+  const InitPage({super.key});
 
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  _InitPageState createState() => _InitPageState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen> {
+class _InitPageState extends State<InitPage> {
   final WebService webService = WebService();
   final CommunicationManager communicationManager = CommunicationManager();
   String statusMessage = "Inizializzazione...";
@@ -42,6 +42,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
         myName = await _inputDeviceName();
         myId = await webService.register(myIp, myName);
+
+        WebService().log(myName, "REGISTRATO CON ID $myId");
       } else {
         setMessage("Recupero il mio id...");
         myId = myself.first['id'];

@@ -1,14 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}Gestione Ingredienti{% endblock %}
-
 {% block content %}
-<h2>Gestione Ingredienti</h2>
-<form method="POST" action="{{ url_for('admin.aggiungi_ingrediente') }}" class="form-inline">
-    <input type="text" name="nome" placeholder="Nome Ingrediente" required class="input-field">
-    <input type="number" name="qta" placeholder="Quantità" min="0" required class="input-field">
-    <button type="submit" class="button">Aggiungi Ingrediente</button>
-</form>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Gestione Ingredienti</h1>
+    <form action="{{ url_for('admin.reset_ingredienti') }}" method="post">
+        <button type="submit" class="button">RESET</button>
+    </form>
+</div>
 <table class="table">
     <thead>
         <tr>

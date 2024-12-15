@@ -8,15 +8,16 @@ import '../models/node.dart';
 import '../mutex/ricart_agrawala.dart';
 
 class CommunicationManager {
+  int wsPort = Shared.websocketPort;
+
   int nodeId;
   String nodeName;
   List<Node> peers = [];
   HttpServer? _server;
 
   void _startServer() async {
-    const port = Shared.websocketPort;
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, port);
-    debugPrint('WebSocket server listening on ws://localhost:$port');
+    _server = await HttpServer.bind(InternetAddress.anyIPv4, wsPort);
+    debugPrint('[ws-server] started');
 
     _server?.listen((HttpRequest request) async {
       if (WebSocketTransformer.isUpgradeRequest(request)) {
@@ -101,6 +102,7 @@ class CommunicationManager {
   void refreshPeers() async {
     final knownPeers = await WebService().getCamerieri();
 
+    //TODO eliminare i nodi non più presenti
     for (var peer in knownPeers) {
       if (peer['indirizzo'] == await Shared.getIpAddress()) continue;
       if (peers.map((p) => p.address).contains(peer['indirizzo'])) continue;
@@ -123,7 +125,7 @@ class CommunicationManager {
   void removeNode(String address) {
     if (!peers.any((p) => p.address == address)) return;
 
-    //node.close();
+    //TODO node.close();
     peers.removeWhere((p) => p.address == address);
   }
 
@@ -146,8 +148,7 @@ class CommunicationManager {
 
   IOWebSocketChannel? _createChannel(String address) {
     try {
-      return IOWebSocketChannel.connect(
-          'ws://$address:${Shared.websocketPort}');
+      return IOWebSocketChannel.connect('ws://$address:$wsPort');
     } catch (e) {
       return null;
     }

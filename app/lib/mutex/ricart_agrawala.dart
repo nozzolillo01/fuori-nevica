@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fuori_nevica/services/communication_manager.dart';
 import 'package:fuori_nevica/mutex/mutex_state.dart';
+import 'package:fuori_nevica/services/webservice.dart';
 
 class RicartAgrawala {
   final CommunicationManager communicationManager = CommunicationManager();
@@ -37,19 +38,13 @@ class RicartAgrawala {
     });
 
     communicationManager.multicastMessage(message);
-    debugPrint("[${getTime()}] INVIATA REQUEST, ATTENDO REPLIES");
-    debugPrint("[${getTime()}] $message");
+    log("INVIATA REQUEST, ATTENDO REPLIES");
     while (!_allRepliesReceived()) {
       await Future.delayed(const Duration(milliseconds: 100));
     }
 
-    debugPrint("[${getTime()}] RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA");
+    log("RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA");
     _accessResource();
-  }
-
-  String getTime() {
-    final now = DateTime.now();
-    return '${now.hour}:${now.minute}:${now.second}:${now.millisecond}';
   }
 
   void receiveReply(Map<String, dynamic> data) {
@@ -57,6 +52,7 @@ class RicartAgrawala {
     final otherTimestamp = data['timestamp'] as int;
 
     _currentTimestamp = max(_currentTimestamp, otherTimestamp) + 1;
+    log('RICEVUTA REPLY DAL NODO $otherNodeId');
     _replies.add(otherNodeId);
   }
 
@@ -64,18 +60,16 @@ class RicartAgrawala {
     final otherNodeId = data['nodeId'];
     final otherTimestamp = data['timestamp'] as int;
 
-    debugPrint(
-        '[${getTime()}] RICEVUTA RICHIESTA <ID: $otherNodeId, TIMESTAMP: $otherTimestamp>');
+    log('RICEVUTA RICHIESTA <ID: $otherNodeId, TIMESTAMP: $otherTimestamp>');
     _currentTimestamp = max(_currentTimestamp, otherTimestamp) + 1;
 
-    debugPrint(
-        '[${getTime()}] SONO NELLO STATO $_state, MIO TIMESTAMP: $_currentTimestamp, MIO ID: ${communicationManager.nodeId}');
+    log('[STATO: $_state] [TIMESTAMP: $_currentTimestamp] [ID: ${communicationManager.nodeId}]');
     if (!_shouldQueue(otherTimestamp, otherNodeId)) {
       //REPLY IMMEDIATA
-      debugPrint('[${getTime()}] INVIO REPLY');
+      log('INVIO REPLY');
       _sendReply(otherNodeId);
     } else {
-      debugPrint('[${getTime()}] ACCODO RICHIESTA');
+      log('ACCODO RICHIESTA');
       _queue.add(otherNodeId);
     }
   }
@@ -110,19 +104,28 @@ class RicartAgrawala {
 
   void _accessResource() async {
     _state = MutexState.held;
-    debugPrint('[${getTime()}] ACCEDO ALLA RISORSA CONDIVISA');
+    log('ACCEDO ALLA RISORSA CONDIVISA');
   }
 
   void releaseResource() {
     _state = MutexState.released;
     _replies = [];
 
-    debugPrint('[${getTime()}] RILASCIO LA RISORSA, RISPONDO ALLA QUEUE');
+    log('RILASCIO LA RISORSA, RISPONDO ALLA QUEUE');
     for (final nodeId in _queue) {
-      debugPrint('[${getTime()}] INVIO REPLY AL NODO $nodeId IN CODA');
+      log('INVIO REPLY AL NODO $nodeId IN CODA');
       _sendReply(nodeId);
     }
 
     _queue = [];
+  }
+
+  void log(String message) {
+    final now = DateTime.now();
+    final msg =
+        '[${now.hour}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}:${now.millisecond.toString().padLeft(3, '0')}] $message';
+
+    debugPrint(msg);
+    WebService().log(communicationManager.nodeName, msg);
   }
 }

@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 import sqlite3
 
@@ -6,12 +7,10 @@ admin_bp = Blueprint('admin', __name__)
 def get_db_connection():
     return sqlite3.connect('static/database.db')
 
-# Route principale per l'amministrazione
 @admin_bp.route('/')
 def admin_home():
     return render_template('index.html')
 
-# Route per visualizzare e gestire gli ingredienti
 @admin_bp.route('/ingredienti')
 def gestisci_ingredienti():
     conn = get_db_connection()
@@ -82,6 +81,16 @@ def modifica_nome_cameriere(id):
 
     return redirect(url_for('admin.gestisci_camerieri'))
 
+@admin_bp.route('/logs/clear/<string:id>', methods=['GET'])
+def clear_logs(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM logs WHERE dispositivo = ? AND messaggio NOT LIKE 'REGISTRATO%'", (id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('admin.read_logs'))
+
 @admin_bp.route('/camerieri/edit/address/<int:id>', methods=['POST'])
 def modifica_addr_cameriere(id):
     ind = request.form['indirizzo']
@@ -94,6 +103,28 @@ def modifica_addr_cameriere(id):
 
     return redirect(url_for('admin.gestisci_camerieri'))
 
+@admin_bp.route('/logs', methods=['GET'])
+def read_logs():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM logs')
+    logs_raw = cursor.fetchall()
+    
+    logs = {}
+    for log in logs_raw:
+        device = log[1]
+        if device in logs:
+            logs[device].append(log[2])
+        else:
+            logs[device] = [log[2]]
+
+    logs = dict(sorted(logs.items()))
+
+    conn.commit()
+    conn.close()
+
+    return render_template('logs.html', logs=logs)
+
 @admin_bp.route('/camerieri/reset/', methods=['POST'])
 def reset_camerieri():
     conn = get_db_connection()
@@ -104,3 +135,19 @@ def reset_camerieri():
     conn.close()
 
     return redirect(url_for('admin.gestisci_camerieri'))
+
+@admin_bp.route('/ingredienti/reset/', methods=['POST'])
+def reset_ingredienti():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM ingredienti')
+    cursor.execute('DELETE FROM sqlite_sequence WHERE name = "ingredienti"')
+    conn.commit()
+
+    with open('ingredienti.json', 'r', encoding='utf-8') as ingredienti:
+        for ingrediente in json.load(ingredienti):
+            cursor.execute('INSERT INTO ingredienti (nome, qta) VALUES (?, ?)', (ingrediente['nome'], ingrediente['qta']))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('admin.gestisci_ingredienti'))

@@ -63,4 +63,12 @@ class WebService {
       return -1;
     }
   }
+
+  void log(String dispositivo, String msg) async {
+    await http.post(
+      Uri.parse('$baseUrl/log'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'dispositivo': dispositivo, 'msg': msg}),
+    );
+  }
 }

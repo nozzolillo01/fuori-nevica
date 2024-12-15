@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <title>E FUORI NEVICA ADMIN</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='logo-icon.png') }}" alt="Logo Icon">
-        <h1>E FUORI NEVICA - ADMIN</h1>
+        <a href="{{ url_for('admin.admin_home') }}">
+            <img src="{{ url_for('static', filename='logo-icon.png') }}" alt="Logo Icon">
+        </a>
+        <h1>E FUORI NEVICA</h1>
         <nav>
             <a href="{{ url_for('admin.gestisci_camerieri') }}">Camerieri</a>
+            <span class="nav-separator">|</span>
             <a href="{{ url_for('admin.gestisci_ingredienti') }}">Ingredienti</a>
+            <span class="nav-separator">|</span>
+            <a href="{{ url_for('admin.read_logs') }}">Log Terminali</a>
         </nav>
     </header>
     <main>

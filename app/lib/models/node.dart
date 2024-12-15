@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:web_socket_channel/io.dart';
 
 class Node {
+  //TODO migrare la creazione del canale-ws qui
   final String address, name;
   final int id;
   IOWebSocketChannel? channel;

@@ -81,14 +81,6 @@ class OrderProvider extends ChangeNotifier {
     }
 
     return result;
-
-    /* for (final pizza in errors.keys) {
-      final error = errors[pizza]!;
-      debugPrint('Errori per $pizza:');
-      for (final errorDetail in error) {
-        debugPrint(errorDetail);
-      }
-    }*/
   }
 
   void resetOrder() {

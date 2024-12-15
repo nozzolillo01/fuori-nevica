@@ -1,5 +1,5 @@
 import 'package:fuori_nevica/services/communication_manager.dart';
-import 'package:fuori_nevica/views/loading_page.dart';
+import 'package:fuori_nevica/views/init_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,7 +11,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChannels.lifecycle.setMessageHandler((message) async {
     if (message == 'AppLifecycleState.detached') {
-      debugPrint("App chiusa");
       CommunicationManager().reset(); //TODO Check
     }
 
@@ -31,7 +30,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => OrderProvider()),
       ],
       child: MaterialApp(
-        home: const LoadingScreen(),
+        home: const InitPage(),
         theme: ThemeData(
           primarySwatch: Colors.green,
           scaffoldBackgroundColor: Colors.white,

@@ -119,7 +119,6 @@ def add_cameriere():
         'nome': new_cameriere_data[2]
     }
     conn.close()
-    #TODO handle errors
     return jsonify(new_cameriere)
 
 if __name__ == '__main__':

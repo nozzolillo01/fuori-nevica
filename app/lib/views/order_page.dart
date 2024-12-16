@@ -112,6 +112,17 @@ class OrderPageState extends State<OrderPage> {
 
   void _showConfirmationDialog(
       BuildContext context, OrderProvider pizzaOrderModel) {
+    if (pizzaOrderModel.order.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("L'ordine attuale è vuoto!"),
+        ),
+      );
+
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -162,17 +173,31 @@ class OrderPageState extends State<OrderPage> {
 
   void _showErrorDialog(BuildContext context, OrderProvider pizzaOrderModel,
       Map<String, dynamic> errors) {
-    //TODO grafica
     final errorString = errors.entries
         .map((entry) =>
             'x1 ${entry.key.toUpperCase().split("_")[0]}:\n${entry.value.join(', ')}\n')
         .join('\n');
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('ATTENZIONE!'),
-          content: Text('L\'ORDINE NON PUÒ ESSERE REALIZZATO:\n$errorString'),
+          title: const Row(
+            children: [
+              Icon(Icons.error, color: Colors.red),
+              SizedBox(width: 10),
+              Text('ORDINE RIFIUTATO',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          content: SizedBox(
+            height: 250,
+            child: Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  child: Text(errorString),
+                )),
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

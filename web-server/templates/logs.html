@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Logs Terminali</h1>
+<div class="logs-container" id="logs-container">
+    {% for terminal, log_list in logs.items() %}
+        <div class="log" id="{{ terminal }}-container">
+           <div class="log-header">
+                <h3 class="log-name">{{ terminal }}</h3>
+                <button class="clear-logs-button" onclick="clearLogs('{{ terminal }}')">RESET</button>
+            </div>
+            <div class="log-content" id="{{ terminal }}-content">
+                {% for log in log_list %}
+                    <p>{{ log }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<script>
+    function clearLogs(terminalId) {
+        fetch(`/admin/logs/clear/${terminalId}`, {
+            method: 'GET'
+        }).then(response => {
+            if (response.ok) {
+                console.log(`Logs per terminale ${terminalId} resettati.`);
+                location.replace(location.href);
+            } else {
+                console.error(`Errore durante il reset dei log per terminale ${terminalId}.`);
+            }
+        }).catch(error => console.error('Errore nella richiesta Clear Logs:', error));
+    }
+
+    function fetchLogs() {
+        fetch("/api/logs")
+            .then(response => response.json())
+            .then(data => {
+                Object.keys(data.logs).forEach(terminal => {
+                    const logContent = document.getElementById(`${terminal}-content`);
+                    const logContainer = document.getElementById(`${terminal}-container`);
+                    
+                    if (logContent) {
+                        logContent.innerHTML = data.logs[terminal].map(log => `<p>${log}</p>`).join('');
+
+                        logContent.scrollTop = logContent.scrollHeight + 10;
+                        logContainer.scrolltop = logContainer.scrollHeight + 10;
+                    }
+                });
+            })
+            .catch(error => console.error('Errore durante il fetch dei log:', error));
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 5000);
+</script>
+{% endblock %}

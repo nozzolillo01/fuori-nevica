@@ -1,6 +1,6 @@
 # **Fuori Nevica**
 
-Questa repository contiene l'intero progetto e la relativa presentazione di un'applicazione, realizzata per il corso di Distributed System and IoT, destinata ai camerieri di un ipotetico ristorante, per prendere ordinazioni ai tavoli. Utilizza l'algoritmo di **Ricart-Agrawala** per garantire l'accesso concorrente sicuro a un web server che gestisce un database di ingredienti.
+Questa repository contiene l'intero progetto e la relativa presentazione di un'applicazione, realizzata per il corso di Distributed System and IoT, destinata ai camerieri di un ipotetico ristorante, per prendere ordinazioni ai tavoli. Il focus è nell'implementazione dell'algoritmo di **Ricart-Agrawala** per garantire l'accesso concorrente sicuro a un web server che gestisce un database di ingredienti.
 
 
 ---

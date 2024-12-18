@@ -115,8 +115,12 @@ def read_logs():
         device = log[1]
         if device in logs:
             logs[device].append(log[2])
+            logs[device] = sorted(logs[device])
         else:
             logs[device] = [log[2]]
+
+    for device in logs:
+        logs[device] = sorted(logs[device])
 
     logs = dict(sorted(logs.items()))
 

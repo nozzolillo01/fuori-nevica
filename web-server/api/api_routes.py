@@ -93,6 +93,11 @@ def read_logs():
         else:
             logs[device] = [log[2]]
 
+    for device in logs:
+        logs[device] = sorted(logs[device])
+
+    logs = dict(sorted(logs.items()))
+    #TODO call api read logs
     conn.commit()
     conn.close()
 

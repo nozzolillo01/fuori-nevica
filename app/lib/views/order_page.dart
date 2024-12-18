@@ -185,7 +185,7 @@ class OrderPageState extends State<OrderPage> {
           title: const Row(
             children: [
               Icon(Icons.error, color: Colors.red),
-              SizedBox(width: 10),
+              SizedBox(width: 5),
               Text('ORDINE RIFIUTATO',
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ],

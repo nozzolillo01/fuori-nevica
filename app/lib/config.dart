@@ -4,7 +4,7 @@ import 'package:fuori_nevica/services/communication_manager.dart';
 
 class Shared {
   static const int websocketPort = 8080;
-  static const String apiBaseUrl = 'http://172.20.10.3:5000/api';
+  static const String apiBaseUrl = 'http://192.168.241.196:5000/api';
 
   static CommunicationManager? communicationManager;
 

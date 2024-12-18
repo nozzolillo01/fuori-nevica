@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E FUORI NEVICA ADMIN</title>
+    <link rel="stylesheet" href="E%20FUORI%20NEVICA%20ADMIN_files/style.css">
+</head>
+<body>
+    <header style="height: 200.867px;">
+        <a href="http://localhost:5000/admin/">
+            <img src="E%20FUORI%20NEVICA%20ADMIN_files/logo-icon.png" alt="Logo Icon" style="height:64px">
+        </a>
+        <h1>E FUORI NEVICA</h1>
+        <nav>
+            <a href="http://localhost:5000/admin/camerieri">Camerieri</a>
+            <span class="nav-separator">|</span>
+            <a href="http://localhost:5000/admin/ingredienti">Ingredienti</a>
+            <span class="nav-separator">|</span>
+            <a href="http://localhost:5000/admin/logs">Log Terminali</a>
+        </nav>
+    </header>
+    <main>
+        
+<h1>Logs Terminali</h1>
+<div class="logs-container" id="logs-container">
+    
+        <div class="log" id="C1-container">
+           <div class="log-header">
+                <h3 class="log-name">C1</h3>
+                <button class="clear-logs-button" onclick="clearLogs('C1')">RESET</button>
+            </div>
+            <div class="log-content" id="C1-content"><p>REGISTRATO CON ID 1</p><p>[11:18:37:511] RICEVUTA RICHIESTA <id: 3,="" timestamp:="" 1=""></id:></p><p>[11:18:37:540] [STATO: MutexState.released] [TIMESTAMP: 2] [ID: 1]</p><p>[11:18:37:542] INVIO REPLY</p><p>[11:18:37:994] INVIATA REQUEST, ATTENDO REPLIES</p><p>[11:18:38:045] RICEVUTA REPLY DAL NODO 2</p><p>[11:18:42:796] RICEVUTA REPLY DAL NODO 3</p><p>[11:18:42:870] RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA</p><p>[11:18:42:873] ACCEDO ALLA RISORSA CONDIVISA</p><p>[11:18:47:886] RILASCIO LA RISORSA, RISPONDO ALLA QUEUE</p></div>
+        </div>
+    
+        <div class="log" id="C2-container">
+           <div class="log-header">
+                <h3 class="log-name">C2</h3>
+                <button class="clear-logs-button" onclick="clearLogs('C2')">RESET</button>
+            </div>
+            <div class="log-content" id="C2-content"><p>REGISTRATO CON ID 2</p><p>[11:18:36:493] RICEVUTA RICHIESTA <id: 3,="" timestamp:="" 1=""></id:></p><p>[11:18:36:497] [STATO: MutexState.released] [TIMESTAMP: 2] [ID: 2]</p><p>[11:18:36:499] INVIO REPLY</p><p>[11:18:37:109] RICEVUTA RICHIESTA <id: 1,="" timestamp:="" 4=""></id:></p><p>[11:18:37:111] [STATO: MutexState.released] [TIMESTAMP: 5] [ID: 2]</p><p>[11:18:37:112] INVIO REPLY</p></div>
+        </div>
+    
+        <div class="log" id="C3-container">
+           <div class="log-header">
+                <h3 class="log-name">C3</h3>
+                <button class="clear-logs-button" onclick="clearLogs('C3')">RESET</button>
+            </div>
+            <div class="log-content" id="C3-content"><p>REGISTRATO CON ID 3</p><p>[11:18:37:466] INVIATA REQUEST, ATTENDO REPLIES</p><p>[11:18:37:515] RICEVUTA REPLY DAL NODO 2</p><p>[11:18:37:648] RICEVUTA REPLY DAL NODO 1</p><p>[11:18:37:679] RICEVUTE TUTTE LE RISPOSTE, ACCEDO RISORSA</p><p>[11:18:37:681] ACCEDO ALLA RISORSA CONDIVISA</p><p>[11:18:38:098] RICEVUTA RICHIESTA <id: 1,="" timestamp:="" 4=""></id:></p><p>[11:18:38:102] [STATO: MutexState.held] [TIMESTAMP: 6] [ID: 3]</p><p>[11:18:38:106] ACCODO RICHIESTA</p><p>[11:18:42:690] RILASCIO LA RISORSA, RISPONDO ALLA QUEUE</p><p>[11:18:42:694] INVIO REPLY AL NODO 1 IN CODA</p></div>
+        </div>
+    
+</div>
+<script>
+    function clearLogs(terminalId) {
+        fetch(`/admin/logs/clear/${terminalId}`, {
+            method: 'GET'
+        }).then(response => {
+            if (response.ok) {
+                console.log(`Logs per terminale ${terminalId} resettati.`);
+                location.replace(location.href);
+            } else {
+                console.error(`Errore durante il reset dei log per terminale ${terminalId}.`);
+            }
+        }).catch(error => console.error('Errore nella richiesta Clear Logs:', error));
+    }
+
+    function fetchLogs() {
+        fetch("/api/logs")
+            .then(response => response.json())
+            .then(data => {
+                Object.keys(data.logs).forEach(terminal => {
+                    const logContent = document.getElementById(`${terminal}-content`);
+                    const logContainer = document.getElementById(`${terminal}-container`);
+                    
+                    if (logContent) {
+                        logContent.innerHTML = data.logs[terminal].map(log => `<p>${log}</p>`).join('');
+
+                        logContent.scrollTop = logContent.scrollHeight + 10;
+                        logContainer.scrolltop = logContainer.scrollHeight + 10;
+                    }
+                });
+            })
+            .catch(error => console.error('Errore durante il fetch dei log:', error));
+    }
+
+    fetchLogs();
+    setInterval(fetchLogs, 5000);
+</script>
+
+    </main>
+
+</body></html>
